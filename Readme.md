@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Владислав Роик](https://up.htmlacademy.ru/ecmascript/14/user/252513).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Казаков](https://up.htmlacademy.ru/ecmascript/14/user/343981).
 
 ---
 
