@@ -30,6 +30,7 @@ import {
   getRandomFloat,
   getRandomInteger
 } from './utils/common';
+import {generateComments} from './comment';
 
 const generateActors = () => {
   const actorsAmount = getRandomInteger(MIN_ACTORS_AMOUNT, MAX_ACTORS_AMOUNT);
@@ -87,10 +88,13 @@ const generateWriters = () => {
   return getRandomElements(WRITERS, writersAmount);
 };
 
-let filmId = 0;
-let commentsId = 0;
+let id = 0;
 
 export const generateFilm = () => {
+  const comments = generateComments();
+
+  id++;
+
   const actors = generateActors();
   const ageRating = generateAgeRating();
   const country = generateCountry();
@@ -108,16 +112,13 @@ export const generateFilm = () => {
   const favorite = getRandomBoolean();
   const watchlist = getRandomBoolean();
 
-  filmId++;
-  commentsId++;
-
   return {
-    id: filmId,
+    comments,
+    id,
     filmInfo: {
       actors,
       ageRating,
       alternativeTitle: title,
-      commentsId,
       country,
       description,
       director,

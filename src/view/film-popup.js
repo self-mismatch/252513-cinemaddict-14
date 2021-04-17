@@ -49,7 +49,11 @@ const createCommentsTemplate = (comments) => {
   return comments.map((comment) => createCommentTemplate(comment)).join('');
 };
 
-export const createFilmPopupTemplate = (film, comments) => {
+export const createFilmPopupTemplate = (film) => {
+  const {
+    comments,
+  } = film;
+
   const {
     filmInfo,
     userDetails,
@@ -59,7 +63,6 @@ export const createFilmPopupTemplate = (film, comments) => {
     actors,
     ageRating,
     alternativeTitle,
-    commentsId,
     country,
     description,
     director,
@@ -89,9 +92,8 @@ export const createFilmPopupTemplate = (film, comments) => {
   const watchedInputCheck = alreadyWatched ? 'checked' : '';
   const favoriteInputCheck = favorite ? 'checked' : '';
 
-  const filmComments = comments.find((el) => el.id === commentsId).comments;
-  const commentsCount = filmComments.length;
-  const commentsTemplate = createCommentsTemplate(filmComments);
+  const commentsCount = comments.length;
+  const commentsTemplate = createCommentsTemplate(comments);
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">

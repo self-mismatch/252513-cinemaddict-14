@@ -9,21 +9,18 @@ import {createUserProfileTemplate} from './view/user-profile';
 
 import {getMostCommentedFilms, getTopRatedFilms} from './utils/film';
 
-import {generateComments} from './mock/comment';
 import {generateFilm} from './mock/film';
 import {generateFilter} from './mock/filter';
 
 const FILM_AMOUNT = 23;
-const COMMENT_AMOUNT = FILM_AMOUNT;
 
 const FILM_COUNT_PER_STEP = 5;
 
 const films = new Array(FILM_AMOUNT).fill().map(generateFilm);
-const comments = new Array(COMMENT_AMOUNT).fill().map(generateComments);
 const filters = generateFilter(films);
 
 const topRatedFilms = getTopRatedFilms(films);
-const mostCommentedFilms = getMostCommentedFilms(films, comments);
+const mostCommentedFilms = getMostCommentedFilms(films);
 
 const render = (container, template, place = 'beforeend') => {
   container.insertAdjacentHTML(place, template);
@@ -50,7 +47,7 @@ const topRatedFilmsContainer = filmsLists[1].querySelector('.films-list__contain
 const mostCommentedFilmsContainer = filmsLists[2].querySelector('.films-list__container');
 
 for (let i = 0; i < Math.min(films.length, FILM_COUNT_PER_STEP); i++) {
-  render(mainFilmsContainer, createFilmCardTemplate(films[i], comments));
+  render(mainFilmsContainer, createFilmCardTemplate(films[i]));
 }
 
 if (films.length > FILM_COUNT_PER_STEP) {
@@ -65,7 +62,7 @@ if (films.length > FILM_COUNT_PER_STEP) {
 
     films
       .slice(renderedFilmCount, renderedFilmCount + FILM_COUNT_PER_STEP)
-      .forEach((film) => render(mainFilmsContainer, createFilmCardTemplate(film, comments)));
+      .forEach((film) => render(mainFilmsContainer, createFilmCardTemplate(film)));
 
     renderedFilmCount += FILM_COUNT_PER_STEP;
 
@@ -76,11 +73,11 @@ if (films.length > FILM_COUNT_PER_STEP) {
 }
 
 topRatedFilms.forEach((film) => {
-  render(topRatedFilmsContainer, createFilmCardTemplate(film, comments));
+  render(topRatedFilmsContainer, createFilmCardTemplate(film));
 });
 
 mostCommentedFilms.forEach((film) => {
-  render(mostCommentedFilmsContainer, createFilmCardTemplate(film, comments));
+  render(mostCommentedFilmsContainer, createFilmCardTemplate(film));
 });
 
-render(siteBody, createFilmPopupTemplate(films[0], comments));
+render(siteBody, createFilmPopupTemplate(films[0]));

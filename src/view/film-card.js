@@ -12,14 +12,17 @@ const formatDescription = (description) => {
   return description.length > 140 ? description.slice(0, 139).concat('…') : description;
 };
 
-export const createFilmCardTemplate = (film, comments) => {
+export const createFilmCardTemplate = (film) => {
+  const {
+    comments,
+  } = film;
+
   const {
     filmInfo,
     userDetails,
   } = film;
 
   const {
-    commentsId,
     description,
     genres,
     poster,
@@ -39,7 +42,7 @@ export const createFilmCardTemplate = (film, comments) => {
   const formattedRuntime = formatRuntime(runtime);
   const formattedGenres = genres.join(', ');
   const formattedDescription = formatDescription(description);
-  const commentsAmount = comments.find((el) => el.id === commentsId).comments.length;
+  const commentsCount = comments.length;
 
   const watchlistButtonClass = watchlist ? 'film-card__controls-item--add-to-watchlist film-card__controls-item--active' : 'film-card__controls-item--add-to-watchlist';
   const watchedButtonClass = alreadyWatched ? 'film-card__controls-item--mark-as-watched film-card__controls-item--active' : 'film-card__controls-item--mark-as-watched';
@@ -55,7 +58,7 @@ export const createFilmCardTemplate = (film, comments) => {
     </p>
     <img src="./images/posters/${poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${formattedDescription}</p>
-    <a class="film-card__comments">${commentsAmount} comment${commentsAmount > 1 ? 's' : ''}</a>
+    <a class="film-card__comments">${commentsCount} comment${commentsCount > 1 ? 's' : ''}</a>
     <div class="film-card__controls">
       <button class="film-card__controls-item button ${watchlistButtonClass}" type="button">Add to watchlist</button>
       <button class="film-card__controls-item button ${watchedButtonClass}" type="button">Mark as watched</button>
