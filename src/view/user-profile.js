@@ -1,5 +1,6 @@
 import {getWatchedFilmsAmount} from '../utils/film';
 
+// Возможен рефакторинг структуры
 const Rating = {
   '1': 'Novice',
   '11': 'Fan',
