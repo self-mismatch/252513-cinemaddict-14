@@ -24,6 +24,10 @@ const createRatingTemplate = (films) => {
 };
 
 export const createUserProfileTemplate = (films) => {
+  if (films.length <= 0) {
+    return '';
+  }
+
   const ratingTemplate = createRatingTemplate(films);
 
   return `<section class="header__profile profile">

@@ -2,7 +2,7 @@ const Filter = {
   'ALL': 'All movies',
   'WATCHLIST': 'Watchlist',
   'HISTORY': 'History',
-  'FAVORITES': 'FAVORITES',
+  'FAVORITES': 'Favorites',
 };
 
 const createFilterTemplate = (filter, isChecked) => {
@@ -11,7 +11,7 @@ const createFilterTemplate = (filter, isChecked) => {
   const filterActiveClass = isChecked ? 'main-navigation__item--active' : '';
   const filterNameUpperCase = name.toUpperCase();
 
-  const filterCountTemplate = count ? `<span class="main-navigation__item-count">${count}</span>` : '';
+  const filterCountTemplate = count !== null ? `<span class="main-navigation__item-count">${count}</span>` : '';
 
   return `<a href="#${name}" class="main-navigation__item ${filterActiveClass}">${Filter[filterNameUpperCase]} ${filterCountTemplate}</a>`;
 };
