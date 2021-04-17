@@ -30,7 +30,7 @@ const siteBody = document.body;
 const siteHeader = siteBody.querySelector('.header');
 const siteMain = siteBody.querySelector('.main');
 
-render(siteHeader, createUserProfileTemplate());
+render(siteHeader, createUserProfileTemplate(films));
 render(siteMain, createSiteMenuTemplate());
 
 const siteMenu = siteMain.querySelector('.main-navigation');

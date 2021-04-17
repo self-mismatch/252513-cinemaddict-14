@@ -8,4 +8,8 @@ const getTopRatedFilms = (films) => {
   return films.slice().sort((second, first) => first.filmInfo.totalRating - second.filmInfo.totalRating).slice(0, TOP_RATED_FILM_AMOUNT);
 };
 
-export {getMostCommentedFilms, getTopRatedFilms};
+const getWatchedFilmsAmount = (films) => {
+  return films.filter((film) => film.userDetails.alreadyWatched).length;
+};
+
+export {getMostCommentedFilms, getTopRatedFilms, getWatchedFilmsAmount};
