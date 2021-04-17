@@ -2,6 +2,7 @@ import {createFilmCardTemplate} from './view/film-card';
 import {createFilmPopupTemplate} from './view/film-popup';
 import {createFilmsTemplate} from './view/films';
 import {createFiltersTemplate} from './view/filters';
+import {createFooterStatisticTemplate} from './view/footer-statistic';
 import {createSiteMenuTemplate} from './view/site-menu';
 import {createShowMoreButtonTemplate} from './view/show-more-button';
 import {createSortingTemplate} from './view/sorting';
@@ -29,6 +30,7 @@ const render = (container, template, place = 'beforeend') => {
 const siteBody = document.body;
 const siteHeader = siteBody.querySelector('.header');
 const siteMain = siteBody.querySelector('.main');
+const siteFooter = siteBody.querySelector('.footer');
 
 render(siteHeader, createUserProfileTemplate(films));
 render(siteMain, createSiteMenuTemplate());
@@ -79,5 +81,9 @@ topRatedFilms.forEach((film) => {
 mostCommentedFilms.forEach((film) => {
   render(mostCommentedFilmsContainer, createFilmCardTemplate(film));
 });
+
+const footerStatisticsContainer = siteFooter.querySelector('.footer__statistics');
+
+render(footerStatisticsContainer, createFooterStatisticTemplate(films));
 
 render(siteBody, createFilmPopupTemplate(films[0]));
