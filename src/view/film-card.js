@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {MINUTES_IN_HOUR} from '../constants';
+import {createElement} from '../utils/render';
 
 const formatRuntime = (runtime) => {
   const hours = Math.floor(runtime / MINUTES_IN_HOUR);
@@ -12,7 +13,7 @@ const formatDescription = (description) => {
   return description.length > 140 ? description.slice(0, 139).concat('…') : description;
 };
 
-export const createFilmCardTemplate = (film) => {
+const createFilmCardTemplate = (film) => {
   const {
     comments,
   } = film;
@@ -66,3 +67,27 @@ export const createFilmCardTemplate = (film) => {
     </div>
   </article>`;
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

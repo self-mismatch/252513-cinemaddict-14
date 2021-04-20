@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {MINUTES_IN_HOUR} from '../constants';
+import {createElement} from '../utils/render';
 
 const formatReleaseDate = (releaseDate) => {
   return dayjs(releaseDate).format('DD MMMM YYYY');
@@ -49,7 +50,7 @@ const createCommentsTemplate = (comments) => {
   return comments.map((comment) => createCommentTemplate(comment)).join('');
 };
 
-export const createFilmPopupTemplate = (film) => {
+const createFilmPopupTemplate = (film) => {
   const {
     comments,
   } = film;
@@ -209,3 +210,27 @@ export const createFilmPopupTemplate = (film) => {
     </form>
   </section>`;
 };
+
+export default class FilmPopup {
+  constructor(film) {
+    this._film = film;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmPopupTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
