@@ -20,6 +20,8 @@ const generateEmotion = () => {
 let id = 0;
 
 const generateComment = () => {
+  id++;
+
   const author = generateAuthor();
   const content = generateContent();
   const date = generateDate();
@@ -35,10 +37,5 @@ const generateComment = () => {
 };
 
 export const generateComments = () => {
-  id++;
-
-  return {
-    id,
-    comments: new Array(getRandomInteger(MIN_COMMENTS, MAX_COMMENTS)).fill().map(generateComment),
-  };
+  return new Array(getRandomInteger(MIN_COMMENTS, MAX_COMMENTS)).fill().map(generateComment);
 };

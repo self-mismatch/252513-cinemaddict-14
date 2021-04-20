@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {MINUTES_IN_HOUR} from '../constants';
+import {createElement} from '../utils/render';
 
 const formatReleaseDate = (releaseDate) => {
   return dayjs(releaseDate).format('DD MMMM YYYY');
@@ -49,7 +50,11 @@ const createCommentsTemplate = (comments) => {
   return comments.map((comment) => createCommentTemplate(comment)).join('');
 };
 
-export const createFilmPopupTemplate = (film, comments) => {
+const createFilmPopupTemplate = (film) => {
+  const {
+    comments,
+  } = film;
+
   const {
     filmInfo,
     userDetails,
@@ -59,7 +64,6 @@ export const createFilmPopupTemplate = (film, comments) => {
     actors,
     ageRating,
     alternativeTitle,
-    commentsId,
     country,
     description,
     director,
@@ -89,9 +93,8 @@ export const createFilmPopupTemplate = (film, comments) => {
   const watchedInputCheck = alreadyWatched ? 'checked' : '';
   const favoriteInputCheck = favorite ? 'checked' : '';
 
-  const filmComments = comments.find((el) => el.id === commentsId).comments;
-  const commentsCount = filmComments.length;
-  const commentsTemplate = createCommentsTemplate(filmComments);
+  const commentsCount = comments.length;
+  const commentsTemplate = createCommentsTemplate(comments);
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -207,3 +210,27 @@ export const createFilmPopupTemplate = (film, comments) => {
     </form>
   </section>`;
 };
+
+export default class FilmPopup {
+  constructor(film) {
+    this._film = film;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmPopupTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,18 +1,18 @@
 import {createElement} from '../utils/render';
 
-const createSiteMenuTemplate = () => {
-  return `<nav class="main-navigation">
-    <a href="#stats" class="main-navigation__additional">Stats</a>
-  </nav>`;
+const createFooterStatisticTemplate = (films) => {
+  return `<p>${films.length} movies inside</p>`;
 };
 
-export default class SiteMenu {
-  constructor() {
+export default class FooterStatistic {
+  constructor(films) {
+    this._films = films;
+
     this._element = null;
   }
 
   getTemplate() {
-    return createSiteMenuTemplate();
+    return createFooterStatisticTemplate(this._films);
   }
 
   getElement() {

@@ -1,18 +1,20 @@
 import {createElement} from '../utils/render';
 
-const createSiteMenuTemplate = () => {
-  return `<nav class="main-navigation">
-    <a href="#stats" class="main-navigation__additional">Stats</a>
-  </nav>`;
+const createNoFilmTemplate = () => {
+  return `<section class="films">
+    <section class="films-list">
+      <h2 class="films-list__title">There are no movies in our database</h2>
+    </section>
+  </section>`;
 };
 
-export default class SiteMenu {
+export default class NoFilm {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createSiteMenuTemplate();
+    return createNoFilmTemplate();
   }
 
   getElement() {
