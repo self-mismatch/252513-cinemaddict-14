@@ -1,7 +1,7 @@
 import ExtraFilmView from './view/extra-film';
 import FilmCardView from './view/film-card';
 import FilmPopupView from './view/film-popup';
-import FilmSectionView from './view/film-section';
+import FilmsView from './view/film-section';
 import FiltersView from './view/filter';
 import FooterStatisticView from './view/footer-statistic';
 import NoFilmView from './view/no-film';
@@ -49,11 +49,20 @@ const renderFilm = (container, film) => {
   const showPopup = () => {
     siteBody.classList.add('hide-overflow');
     siteBody.appendChild(filmPopupElement);
+
+    popupCloseButton.addEventListener('click', onPopupCloseClick);
+    document.addEventListener('keydown', onEscKeyDown);
+
+    filmCardElement.removeEventListener('click', onFilmCardClick);
   };
 
   const hidePopup = () => {
     siteBody.classList.remove('hide-overflow');
     siteBody.removeChild(filmPopupElement);
+
+    document.removeEventListener('keydown', onEscKeyDown);
+
+    filmCardElement.addEventListener('click', onFilmCardClick);
   };
 
   const onFilmCardClick = (evt) => {
@@ -63,32 +72,17 @@ const renderFilm = (container, film) => {
 
     evt.preventDefault();
     showPopup();
-
-    popupCloseButton.addEventListener('click', onPopupCloseClick);
-    document.addEventListener('keydown', onEscKeyDown);
-
-    filmCardElement.removeEventListener('click', onFilmCardClick);
   };
 
   const onPopupCloseClick = (evt) => {
     evt.preventDefault();
     hidePopup();
-
-    popupCloseButton.removeEventListener('click', onPopupCloseClick);
-    document.removeEventListener('keydown', onEscKeyDown);
-
-    filmCardElement.addEventListener('click', onFilmCardClick);
   };
 
   const onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       hidePopup();
-
-      popupCloseButton.removeEventListener('click', onPopupCloseClick);
-      document.removeEventListener('keydown', onEscKeyDown);
-
-      filmCardElement.addEventListener('click', onFilmCardClick);
     }
   };
 
@@ -103,13 +97,13 @@ const renderFilmBlock = () => {
     return;
   }
 
-  const filmSectionComponent = new FilmSectionView();
-  const filmSectionElement = filmSectionComponent.getElement();
+  const filmsComponent = new FilmsView();
+  const filmsElement = filmsComponent.getElement();
 
-  render(siteMain, filmSectionElement);
+  render(siteMain, filmsElement);
   render(siteMenuElement, new SortingView().getElement(), RenderPosition.AFTEREND);
 
-  const mainFilmsList = filmSectionElement.querySelector('.films-list');
+  const mainFilmsList = filmsElement.querySelector('.films-list');
   const mainFilmsContainer = mainFilmsList.querySelector('.films-list__container');
 
   for (let i = 0; i < Math.min(films.length, FILM_COUNT_PER_STEP); i++) {
@@ -144,9 +138,9 @@ const renderFilmBlock = () => {
   const mostCommentedFilms = getMostCommentedFilms(films);
 
   if (topRatedFilms.every((film) => film.filmInfo.totalRating > 0)) {
-    render(filmSectionElement, new ExtraFilmView('topRated', 'Top rated').getElement());
+    render(filmsElement, new ExtraFilmView('topRated', 'Top rated').getElement());
 
-    const topRatedFilmsContainer = filmSectionElement.querySelector('#topRated').querySelector('.films-list__container');
+    const topRatedFilmsContainer = filmsElement.querySelector('#topRated').querySelector('.films-list__container');
 
     topRatedFilms.forEach((film) => {
       renderFilm(topRatedFilmsContainer, film);
@@ -154,9 +148,9 @@ const renderFilmBlock = () => {
   }
 
   if (mostCommentedFilms.every((film) => film.comments.length > 0)) {
-    render(filmSectionElement, new ExtraFilmView('mostCommented', 'Most commented').getElement());
+    render(filmsElement, new ExtraFilmView('mostCommented', 'Most commented').getElement());
 
-    const mostCommentedFilmsContainer = filmSectionElement.querySelector('#mostCommented').querySelector('.films-list__container');
+    const mostCommentedFilmsContainer = filmsElement.querySelector('#mostCommented').querySelector('.films-list__container');
 
     mostCommentedFilms.forEach((film) => {
       renderFilm(mostCommentedFilmsContainer, film);

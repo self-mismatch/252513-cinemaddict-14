@@ -1,6 +1,6 @@
 import {createElement} from '../utils/render';
 
-const createFilmSectionTemplate = () => {
+const createFilmsTemplate = () => {
   return `<section class="films">
     <section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
@@ -9,13 +9,13 @@ const createFilmSectionTemplate = () => {
   </section>`;
 };
 
-export default class FilmSection {
+export default class Films {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFilmSectionTemplate();
+    return createFilmsTemplate();
   }
 
   getElement() {
