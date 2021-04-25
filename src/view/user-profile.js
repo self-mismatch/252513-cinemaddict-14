@@ -1,35 +1,33 @@
+import Abstract from './abstract';
 import {getWatchedFilmsAmount} from '../utils/film';
-import {createElement} from '../utils/render';
 
-// Возможен рефакторинг структуры
 const Rating = {
   '1': 'Novice',
   '11': 'Fan',
   '21': 'Movie Buff',
 };
 
-const createRatingTemplate = (films) => {
-  const watchedFilmsAmount = getWatchedFilmsAmount(films);
-
-  if (watchedFilmsAmount <= 0) {
-    return '';
-  }
-
+const createRatingTemplate = (watchedFilmsAmount) => {
   const ratingLimits = Object.keys(Rating);
+  let ratingName = null;
 
   for (let i = ratingLimits.length - 1; i >= 0; i--) {
     if (watchedFilmsAmount >= Number(ratingLimits[i])) {
-      return `<p class="profile__rating">${Rating[ratingLimits[i]]}</p>`;
+      ratingName = Rating[ratingLimits[i]];
     }
   }
+
+  return ratingName ? `<p class="profile__rating">${ratingName}</p>` : '';
 };
 
 const createUserProfileTemplate = (films) => {
-  if (films.length <= 0) {
-    return '';
+  const watchedFilmsAmount = getWatchedFilmsAmount(films);
+
+  if (!watchedFilmsAmount) {
+    return ' ';
   }
 
-  const ratingTemplate = createRatingTemplate(films);
+  const ratingTemplate = createRatingTemplate(watchedFilmsAmount);
 
   return `<section class="header__profile profile">
     ${ratingTemplate}
@@ -37,26 +35,14 @@ const createUserProfileTemplate = (films) => {
   </section>`;
 };
 
-export default class UserProfile {
+export default class UserProfile extends Abstract {
   constructor(films) {
-    this._films = films;
+    super();
 
-    this._element = null;
+    this._films = films;
   }
 
   getTemplate() {
     return createUserProfileTemplate(this._films);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

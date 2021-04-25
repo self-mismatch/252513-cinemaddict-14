@@ -1,6 +1,8 @@
+import Abstract from './abstract';
 import dayjs from 'dayjs';
 import {MINUTES_IN_HOUR} from '../constants';
-import {createElement} from '../utils/render';
+
+const POPUP_OPEN_CLASSES = ['film-card__poster', 'film-card__title', 'film-card__comments'];
 
 const formatRuntime = (runtime) => {
   const hours = Math.floor(runtime / MINUTES_IN_HOUR);
@@ -68,26 +70,36 @@ const createFilmCardTemplate = (film) => {
   </article>`;
 };
 
-export default class FilmCard {
+export default class FilmCard extends Abstract {
   constructor(film) {
+    super();
+
     this._film = film;
 
-    this._element = null;
+    this._openPopupClickHandler = this._openPopupClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
+  _openPopupClickHandler(evt) {
+    if (!POPUP_OPEN_CLASSES.includes(evt.target.className)) {
+      return;
     }
 
-    return this._element;
+    evt.preventDefault();
+
+    this._callback.openPopupClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setOpenPopupClickHandler(callback) {
+    this._callback.openPopupClick = callback;
+    this.getElement().addEventListener('click', this._openPopupClickHandler);
+  }
+
+  removeOpenPopupClickHandler() {
+    this._callback.openPopupClick = null;
+    this.getElement().removeEventListener('click', this._openPopupClickHandler);
   }
 }

@@ -1,4 +1,4 @@
-import {createElement} from '../utils/render';
+import Abstract from './abstract';
 
 const createExtraFilmTemplate = (id, title) => {
   return `<section class="films-list films-list--extra" id="${id}">
@@ -7,27 +7,15 @@ const createExtraFilmTemplate = (id, title) => {
   </section>`;
 };
 
-export default class ExtraFilm {
+export default class ExtraFilm extends Abstract {
   constructor(id, title) {
+    super();
+
     this._id = id;
     this._title = title;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createExtraFilmTemplate(this._id, this._title);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

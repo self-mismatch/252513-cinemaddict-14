@@ -1,4 +1,4 @@
-import {createElement} from '../utils/render';
+import Abstract from './abstract';
 
 const createSortingTemplate = () => {
   return `<ul class="sort">
@@ -8,24 +8,8 @@ const createSortingTemplate = () => {
   </ul>`;
 };
 
-export default class Sorting {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Sorting extends Abstract {
   getTemplate() {
     return createSortingTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
