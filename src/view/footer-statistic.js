@@ -1,29 +1,17 @@
-import {createElement} from '../utils/render';
+import Abstract from './abstract';
 
 const createFooterStatisticTemplate = (films) => {
   return `<p>${films.length} movies inside</p>`;
 };
 
-export default class FooterStatistic {
+export default class FooterStatistic extends Abstract {
   constructor(films) {
-    this._films = films;
+    super();
 
-    this._element = null;
+    this._films = films;
   }
 
   getTemplate() {
     return createFooterStatisticTemplate(this._films);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,6 +1,6 @@
+import Abstract from './abstract';
 import dayjs from 'dayjs';
 import {MINUTES_IN_HOUR} from '../constants';
-import {createElement} from '../utils/render';
 
 const formatReleaseDate = (releaseDate) => {
   return dayjs(releaseDate).format('DD MMMM YYYY');
@@ -211,26 +211,27 @@ const createFilmPopupTemplate = (film) => {
   </section>`;
 };
 
-export default class FilmPopup {
+export default class FilmPopup extends Abstract {
   constructor(film) {
+    super();
+
     this._film = film;
 
-    this._element = null;
+    this._closeButtonClick = this._closeButtonClick.bind(this);
   }
 
   getTemplate() {
     return createFilmPopupTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
+  _closeButtonClick(evt) {
+    evt.preventDefault();
 
-    return this._element;
+    this._callback.closeButtonClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseButtonClickHandler(callback) {
+    this._callback.closeButtonClick = callback;
+    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._closeButtonClick);
   }
 }
