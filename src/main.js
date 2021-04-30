@@ -9,7 +9,7 @@ import {render, RenderPosition} from './utils/render';
 import {generateFilm} from './mock/film';
 import {generateFilter} from './utils/filter';
 
-const FILM_AMOUNT = 3;
+const FILM_AMOUNT = 23;
 
 const films = new Array(FILM_AMOUNT).fill().map(generateFilm);
 const filters = generateFilter(films);
