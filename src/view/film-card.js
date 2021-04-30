@@ -76,11 +76,32 @@ export default class FilmCard extends Abstract {
 
     this._film = film;
 
+    this._watchlistButtonClickHandler = this._watchlistButtonClickHandler.bind(this);
+    this._watchedButtonClickHandler = this._watchedButtonClickHandler.bind(this);
+    this._favoriteButtonClickHandler = this._favoriteButtonClickHandler.bind(this);
     this._openPopupClickHandler = this._openPopupClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._film);
+  }
+
+  _watchlistButtonClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.watchlistButtonClick();
+  }
+
+  _watchedButtonClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.watchedButtonClick();
+  }
+
+  _favoriteButtonClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.favoriteButtonClick();
   }
 
   _openPopupClickHandler(evt) {
@@ -93,13 +114,32 @@ export default class FilmCard extends Abstract {
     this._callback.openPopupClick();
   }
 
+  setWatchlistButtonClickHandler(callback) {
+    this._callback.watchlistButtonClick = callback;
+    this.getElement().querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this._watchlistButtonClickHandler);
+  }
+
+  setWatchedButtonClickHandler(callback) {
+    this._callback.watchedButtonClick = callback;
+    this.getElement().querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this._watchedButtonClickHandler);
+  }
+
+  setFavoriteButtonClickHandler(callback) {
+    this._callback.favoriteButtonClick = callback;
+    this.getElement().querySelector('.film-card__controls-item--favorite').addEventListener('click', this._favoriteButtonClickHandler);
+  }
+
   setOpenPopupClickHandler(callback) {
     this._callback.openPopupClick = callback;
     this.getElement().addEventListener('click', this._openPopupClickHandler);
   }
 
-  removeOpenPopupClickHandler() {
-    this._callback.openPopupClick = null;
+  removeHandlers() {
+    this._callback = {};
+
+    this.getElement().removeEventListener('click', this._watchlistButtonClickHandler);
+    this.getElement().removeEventListener('click', this._watchedButtonClickHandler);
+    this.getElement().removeEventListener('click', this._favoriteButtonClickHandler);
     this.getElement().removeEventListener('click', this._openPopupClickHandler);
   }
 }

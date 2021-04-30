@@ -217,6 +217,9 @@ export default class FilmPopup extends Abstract {
 
     this._film = film;
 
+    this._watchlistButtonClickHandler = this._watchlistButtonClickHandler.bind(this);
+    this._watchedButtonClickHandler = this._watchedButtonClickHandler.bind(this);
+    this._favoriteButtonClickHandler = this._favoriteButtonClickHandler.bind(this);
     this._closeButtonClick = this._closeButtonClick.bind(this);
   }
 
@@ -224,10 +227,43 @@ export default class FilmPopup extends Abstract {
     return createFilmPopupTemplate(this._film);
   }
 
+  _watchlistButtonClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.watchlistButtonClick();
+  }
+
+  _watchedButtonClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.watchedButtonClick();
+  }
+
+  _favoriteButtonClickHandler(evt) {
+    evt.preventDefault();
+
+    this._callback.favoriteButtonClick();
+  }
+
   _closeButtonClick(evt) {
     evt.preventDefault();
 
     this._callback.closeButtonClick();
+  }
+
+  setWatchlistButtonClickHandler(callback) {
+    this._callback.watchlistButtonClick = callback;
+    this.getElement().querySelector('#watchlist').addEventListener('change', this._watchlistButtonClickHandler);
+  }
+
+  setWatchedButtonClickHandler(callback) {
+    this._callback.watchedButtonClick = callback;
+    this.getElement().querySelector('#watched').addEventListener('change', this._watchedButtonClickHandler);
+  }
+
+  setFavoriteButtonClickHandler(callback) {
+    this._callback.favoriteButtonClick = callback;
+    this.getElement().querySelector('#favorite').addEventListener('change', this._favoriteButtonClickHandler);
   }
 
   setCloseButtonClickHandler(callback) {
