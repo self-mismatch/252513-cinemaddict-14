@@ -12,4 +12,12 @@ const getWatchedFilmsAmount = (films) => {
   return films.filter((film) => film.userDetails.alreadyWatched).length;
 };
 
-export {getMostCommentedFilms, getTopRatedFilms, getWatchedFilmsAmount};
+const getSortedFilmsByDate = (films) => {
+  return films.slice().sort((firstFilm, secondFilm) => secondFilm.filmInfo.releaseDate - firstFilm.filmInfo.releaseDate);
+};
+
+const getSortedFilmsByRating = (films) => {
+  return films.slice().sort((firstFilm, secondFilm) => secondFilm.filmInfo.totalRating - firstFilm.filmInfo.totalRating);
+};
+
+export {getMostCommentedFilms, getTopRatedFilms, getWatchedFilmsAmount, getSortedFilmsByDate, getSortedFilmsByRating};

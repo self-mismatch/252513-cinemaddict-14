@@ -31,6 +31,7 @@ import {
   getRandomInteger
 } from './utils/common';
 import {generateComments} from './comment';
+import {nanoid} from 'nanoid';
 
 const generateActors = () => {
   const actorsAmount = getRandomInteger(MIN_ACTORS_AMOUNT, MAX_ACTORS_AMOUNT);
@@ -88,12 +89,10 @@ const generateWriters = () => {
   return getRandomElements(WRITERS, writersAmount);
 };
 
-let id = 0;
-
 export const generateFilm = () => {
   const comments = generateComments();
 
-  id++;
+  const id = nanoid();
 
   const actors = generateActors();
   const ageRating = generateAgeRating();
