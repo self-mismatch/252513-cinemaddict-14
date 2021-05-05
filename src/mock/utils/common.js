@@ -2,7 +2,7 @@ const getRandomBoolean = () => {
   return Math.random() < 0.5;
 };
 
-const getRandomDate = (start = new Date(1980, 0, 1), end = new Date()) => {
+const getRandomDate = (start = new Date(2010, 0, 1), end = new Date()) => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
 
