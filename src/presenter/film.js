@@ -77,10 +77,6 @@ export default class Film {
     this._filmPopupComponent.setCloseButtonClickHandler(this._handlePopupCloseButtonClick);
   }
 
-  _removeFilmCardHandlers() {
-    this._filmCardComponent.removeHandlers();
-  }
-
   _showPopup() {
     this._changeMode();
     this._mode = Mode.POPUP;
@@ -91,7 +87,6 @@ export default class Film {
 
     this._setFilmPopupHandlers();
     document.addEventListener('keydown', this._escKeyDownHandler);
-    // this._removeFilmCardHandlers();
   }
 
   _hidePopup() {
@@ -101,7 +96,6 @@ export default class Film {
     remove(this._filmPopupComponent);
     this._filmPopupComponent = null;
 
-    // this._setFilmCardHandlers();
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
