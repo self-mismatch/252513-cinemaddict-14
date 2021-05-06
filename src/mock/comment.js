@@ -10,7 +10,7 @@ const generateContent = () => {
 };
 
 const generateDate = () => {
-  return getRandomDate(new Date(2020, 1, 31));
+  return getRandomDate(new Date(2020, 0, 31));
 };
 
 const generateEmotion = () => {
