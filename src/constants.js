@@ -3,10 +3,37 @@ const MINUTES_IN_HOUR = 60;
 const MOST_COMMENTED_FILM_AMOUNT = 2;
 const TOP_RATED_FILM_AMOUNT = 2;
 
+const FilterType = {
+  ALL: 'all',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites',
+};
+
+const MenuItem = {
+  ALL: 'ALL',
+  WATCHLIST: 'WATCHLIST',
+  HISTORY: 'HISTORY',
+  FAVORITES: 'FAVORITES',
+  STATS: 'STATS',
+};
+
 const SortingType = {
   DEFAULT: 'default',
   DATE: 'date',
   RATING: 'rating',
 };
 
-export {MINUTES_IN_HOUR, MOST_COMMENTED_FILM_AMOUNT, TOP_RATED_FILM_AMOUNT, SortingType};
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const UserAction = {
+  ADD_COMMENT: 'ADD_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+  UPDATE_FILM: 'UPDATE_FILM',
+};
+
+export {MINUTES_IN_HOUR, MOST_COMMENTED_FILM_AMOUNT, TOP_RATED_FILM_AMOUNT, FilterType, MenuItem, SortingType, UpdateType, UserAction};

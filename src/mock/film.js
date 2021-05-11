@@ -31,6 +31,7 @@ import {
   getRandomInteger
 } from './utils/common';
 import {generateComments} from './comment';
+
 import {nanoid} from 'nanoid';
 
 const generateActors = () => {

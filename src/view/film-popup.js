@@ -1,3 +1,4 @@
+import he from 'he';
 import Smart from './smart';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -37,11 +38,12 @@ const createCommentTemplate = (comment) => {
     content,
     date,
     emotion,
+    id,
   } = comment;
 
   const formattedDate = formatCommentDate(date);
 
-  return `<li class="film-details__comment">
+  return `<li class="film-details__comment" data-comment-id="${id}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
     </span>
@@ -50,7 +52,7 @@ const createCommentTemplate = (comment) => {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${formattedDate}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
       </p>
     </div>
   </li>`;
@@ -222,7 +224,7 @@ const createFilmPopupTemplate = (data) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(commentText)}</textarea>
             </label>
 
             ${emojiListTemplate}
@@ -243,6 +245,7 @@ export default class FilmPopup extends Smart {
     this._watchedButtonClickHandler = this._watchedButtonClickHandler.bind(this);
     this._favoriteButtonClickHandler = this._favoriteButtonClickHandler.bind(this);
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
+    this._deleteCommentButtonClickHandler = this._deleteCommentButtonClickHandler.bind(this);
     this._commentInputHandler = this._commentInputHandler.bind(this);
     this._commentEmojiChangeHandler = this._commentEmojiChangeHandler.bind(this);
 
@@ -260,6 +263,7 @@ export default class FilmPopup extends Smart {
     this.setWatchedButtonClickHandler(this._callback.watchedButtonClick);
     this.setFavoriteButtonClickHandler(this._callback.favoriteButtonClick);
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    this.setDeleteCommentButtonClickHandler(this._callback.deleteCommentButtonClick);
   }
 
   _watchlistButtonClickHandler(evt) {
@@ -284,6 +288,16 @@ export default class FilmPopup extends Smart {
     evt.preventDefault();
 
     this._callback.closeButtonClick();
+  }
+
+  _deleteCommentButtonClickHandler(evt) {
+    if (evt.target.tagName !== 'BUTTON') {
+      return;
+    }
+
+    evt.preventDefault();
+
+    this._callback.deleteCommentButtonClick(evt.target.dataset.commentId);
   }
 
   _commentEmojiChangeHandler(evt) {
@@ -331,6 +345,11 @@ export default class FilmPopup extends Smart {
   setCloseButtonClickHandler(callback) {
     this._callback.closeButtonClick = callback;
     this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._closeButtonClickHandler);
+  }
+
+  setDeleteCommentButtonClickHandler(callback) {
+    this._callback.deleteCommentButtonClick = callback;
+    this.getElement().querySelector('.film-details__comments-list').addEventListener('click', this._deleteCommentButtonClickHandler);
   }
 
   _setCommentInputHandler() {

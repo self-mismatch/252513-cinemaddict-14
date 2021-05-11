@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card';
 import FilmPopupView from '../view/film-popup';
 
+import {UserAction, UpdateType} from '../constants';
 import {remove, render, replace} from '../utils/render';
 
 const Mode = {
@@ -9,10 +10,11 @@ const Mode = {
 };
 
 export default class Film {
-  constructor(filmListContainer, changeFilm, changeMode) {
+  constructor(filmListContainer, changeData, changeMode, commentsModel) {
     this._filmListContainer = filmListContainer;
-    this._changeFilm = changeFilm;
+    this._changeData = changeData;
     this._changeMode = changeMode;
+    this._commentsModel = commentsModel;
 
     this._siteBody = document.body;
 
@@ -26,6 +28,7 @@ export default class Film {
     this._handleFavoriteButtonClick = this._handleFavoriteButtonClick.bind(this);
     this._handleFilmCardClick = this._handleFilmCardClick.bind(this);
     this._handlePopupCloseButtonClick = this._handlePopupCloseButtonClick.bind(this);
+    this._handlePopupDeleteCommentButtonClick = this._handlePopupDeleteCommentButtonClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
     this._film = null;
@@ -75,17 +78,22 @@ export default class Film {
     this._filmPopupComponent.setFavoriteButtonClickHandler(this._handleFavoriteButtonClick);
 
     this._filmPopupComponent.setCloseButtonClickHandler(this._handlePopupCloseButtonClick);
+
+    this._filmPopupComponent.setDeleteCommentButtonClickHandler(this._handlePopupDeleteCommentButtonClick);
   }
 
   _showPopup() {
     this._changeMode();
     this._mode = Mode.POPUP;
 
+    this._commentsModel.setComments(this._film.comments);
+
     this._filmPopupComponent = new FilmPopupView(this._film);
+    this._setFilmPopupHandlers();
+
     this._siteBody.classList.add('hide-overflow');
     render(this._siteBody, this._filmPopupComponent);
 
-    this._setFilmPopupHandlers();
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
 
@@ -100,7 +108,9 @@ export default class Film {
   }
 
   _handleWatchlistButtonClick() {
-    this._changeFilm(
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._film,
@@ -115,7 +125,9 @@ export default class Film {
   }
 
   _handleWatchedButtonClick() {
-    this._changeFilm(
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._film,
@@ -130,7 +142,9 @@ export default class Film {
   }
 
   _handleFavoriteButtonClick() {
-    this._changeFilm(
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._film,
@@ -150,6 +164,18 @@ export default class Film {
 
   _handlePopupCloseButtonClick() {
     this._hidePopup();
+  }
+
+  _handlePopupDeleteCommentButtonClick(commentId) {
+    this._changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._film,
+      ),
+      commentId,
+    );
   }
 
   _escKeyDownHandler(evt) {
