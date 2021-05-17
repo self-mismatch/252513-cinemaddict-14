@@ -1,23 +1,11 @@
 import Abstract from './abstract';
 import {getWatchedFilmsAmount} from '../utils/film';
-
-const Rating = {
-  '1': 'Novice',
-  '11': 'Fan',
-  '21': 'Movie Buff',
-};
+import {getRank} from '../utils/rank';
 
 const createRatingTemplate = (watchedFilmsAmount) => {
-  const ratingLimits = Object.keys(Rating);
-  let ratingName = null;
+  const rank = getRank(watchedFilmsAmount);
 
-  for (let i = ratingLimits.length - 1; i >= 0; i--) {
-    if (watchedFilmsAmount >= Number(ratingLimits[i])) {
-      ratingName = Rating[ratingLimits[i]];
-    }
-  }
-
-  return ratingName ? `<p class="profile__rating">${ratingName}</p>` : '';
+  return rank ? `<p class="profile__rating">${rank}</p>` : '';
 };
 
 const createUserProfileTemplate = (films) => {

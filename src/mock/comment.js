@@ -36,6 +36,12 @@ const generateComment = () => {
   };
 };
 
-export const generateComments = () => {
-  return new Array(getRandomInteger(MIN_COMMENTS, MAX_COMMENTS)).fill().map(generateComment);
+export const generateComments = (films) => {
+  const comments = {};
+
+  films.forEach((film) => {
+    comments[film.id] = new Array(getRandomInteger(MIN_COMMENTS, MAX_COMMENTS)).fill().map(generateComment);
+  });
+
+  return comments;
 };

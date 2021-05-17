@@ -16,9 +16,15 @@ const formatDescription = (description) => {
 };
 
 const createFilmCardTemplate = (film) => {
+  // const {
+  //   comments,
+  // } = film;
+
   const {
-    comments,
+    id,
   } = film;
+
+  const comments = window.comments[id].slice();
 
   const {
     filmInfo,

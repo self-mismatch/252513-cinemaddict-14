@@ -52,6 +52,11 @@ export default class Comments extends Observer {
       ...this._comments.slice(index + 1),
     ];
 
+    window.comments[updateFilm.id] = [
+      ...window.comments[updateFilm.id].slice(0, index),
+      ...window.comments[updateFilm.id].slice(index + 1),
+    ];
+
     this._notify(updateType, updateFilm);
   }
 }

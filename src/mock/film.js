@@ -90,8 +90,8 @@ const generateWriters = () => {
   return getRandomElements(WRITERS, writersAmount);
 };
 
-export const generateFilm = () => {
-  const comments = generateComments();
+const generateFilm = () => {
+  const comments = [];
 
   const id = nanoid();
 
@@ -111,6 +111,7 @@ export const generateFilm = () => {
   const alreadyWatched = getRandomBoolean();
   const favorite = getRandomBoolean();
   const watchlist = getRandomBoolean();
+  const watchingDate = getRandomDate(releaseDate);
 
   return {
     comments,
@@ -134,6 +135,11 @@ export const generateFilm = () => {
       alreadyWatched,
       favorite,
       watchlist,
+      watchingDate,
     },
   };
+};
+
+export const generateFilms = (amount) => {
+  return new Array(amount).fill().map(generateFilm);
 };

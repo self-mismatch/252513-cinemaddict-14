@@ -86,7 +86,8 @@ export default class Film {
     this._changeMode();
     this._mode = Mode.POPUP;
 
-    this._commentsModel.setComments(this._film.comments);
+    this._commentsModel.setComments(window.comments[this._film.id]);
+    console.log(this._commentsModel.getComments());
 
     this._filmPopupComponent = new FilmPopupView(this._film);
     this._setFilmPopupHandlers();

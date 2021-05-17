@@ -35,12 +35,15 @@ export default class Filter extends Abstract {
   }
 
   _filterTypeChangeHandler(evt) {
-    if (evt.target.tagName !== 'A') {
+    if (evt.target.tagName !== 'A' && evt.target.tagName !== 'SPAN') {
       return;
     }
 
     evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.getAttribute('href').substr(1));
+
+    const filterLink = evt.target.tagName === 'A' ? evt.target : evt.target.parentElement;
+
+    this._callback.filterTypeChange(filterLink.getAttribute('href').substr(1));
   }
 
   setFilterTypeChangeHandler(callback) {

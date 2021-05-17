@@ -83,6 +83,10 @@ const createEmojiListTemplate = (selectedEmoji) => {
 
 const createFilmPopupTemplate = (data) => {
   const {
+    id,
+  } = data;
+
+  const {
     comments,
   } = data;
 
@@ -132,8 +136,9 @@ const createFilmPopupTemplate = (data) => {
   const watchedInputCheck = alreadyWatched ? 'checked' : '';
   const favoriteInputCheck = favorite ? 'checked' : '';
 
-  const commentsCount = comments.length;
-  const commentsTemplate = createCommentsTemplate(comments);
+  const commentsCount = window.comments[id].length;
+  const filmComments = window.comments[id];
+  const commentsTemplate = createCommentsTemplate(filmComments);
 
   const selectedEmojiTemplate = createSelectedEmojiTemplate(state.emoji);
   const emojiListTemplate = createEmojiListTemplate(state.emoji);
@@ -298,6 +303,8 @@ export default class FilmPopup extends Smart {
     evt.preventDefault();
 
     this._callback.deleteCommentButtonClick(evt.target.dataset.commentId);
+
+    // this.updateElement(this.getElement().scrollTop);
   }
 
   _commentEmojiChangeHandler(evt) {
