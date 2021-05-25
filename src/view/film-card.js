@@ -16,17 +16,8 @@ const formatDescription = (description) => {
 };
 
 const createFilmCardTemplate = (film) => {
-  // const {
-  //   comments,
-  // } = film;
-
   const {
-    id,
-  } = film;
-
-  const comments = window.comments[id].slice();
-
-  const {
+    comments,
     filmInfo,
     userDetails,
   } = film;
@@ -65,7 +56,7 @@ const createFilmCardTemplate = (film) => {
       <span class="film-card__duration">${formattedRuntime}</span>
       <span class="film-card__genre">${formattedGenres}</span>
     </p>
-    <img src="./images/posters/${poster}" alt="" class="film-card__poster">
+    <img src="${poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${formattedDescription}</p>
     <a class="film-card__comments">${commentsCount} comment${commentsCount > 1 ? 's' : ''}</a>
     <div class="film-card__controls">
@@ -138,14 +129,5 @@ export default class FilmCard extends Abstract {
   setOpenPopupClickHandler(callback) {
     this._callback.openPopupClick = callback;
     this.getElement().addEventListener('click', this._openPopupClickHandler);
-  }
-
-  removeHandlers() {
-    this._callback = {};
-
-    this.getElement().removeEventListener('click', this._watchlistButtonClickHandler);
-    this.getElement().removeEventListener('click', this._watchedButtonClickHandler);
-    this.getElement().removeEventListener('click', this._favoriteButtonClickHandler);
-    this.getElement().removeEventListener('click', this._openPopupClickHandler);
   }
 }

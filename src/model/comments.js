@@ -15,29 +15,10 @@ export default class Comments extends Observer {
     return this._comments;
   }
 
-  // updateComment(updateType, update) {
-  //   const index = this._comments.findIndex((comment) => comment.id === update.id);
-  //
-  //   if (index === -1) {
-  //     throw new Error('Can\'t update unexisting comment');
-  //   }
-  //
-  //   this._comments = [
-  //     ...this._comments.slice(0, index),
-  //     update,
-  //     ...this._comments.slice(index + 1),
-  //   ];
-  //
-  //   this._notify(updateType, update);
-  // }
-
   addComment(updateType, update) {
-    this._comments = [
-      update,
-      ...this._comments,
-    ];
+    this._comments = update.comments.slice();
 
-    this._notify(updateType, update);
+    this._notify(updateType, update.movie);
   }
 
   deleteComment(updateType, updateFilm, updateId) {
@@ -52,11 +33,34 @@ export default class Comments extends Observer {
       ...this._comments.slice(index + 1),
     ];
 
-    window.comments[updateFilm.id] = [
-      ...window.comments[updateFilm.id].slice(0, index),
-      ...window.comments[updateFilm.id].slice(index + 1),
-    ];
-
     this._notify(updateType, updateFilm);
+  }
+
+  static adaptToClient(comment) {
+    const adaptedComment = Object.assign(
+      {},
+      comment,
+      {
+        content: comment.comment,
+      },
+    );
+
+    delete adaptedComment.comment;
+
+    return adaptedComment;
+  }
+
+  static adaptToServer(comment) {
+    const adaptedComment = Object.assign(
+      {},
+      comment,
+      {
+        comment: comment.content,
+      },
+    );
+
+    delete adaptedComment.content;
+
+    return adaptedComment;
   }
 }

@@ -7,8 +7,9 @@ export default class Smart extends Abstract {
     this._data = {};
   }
 
-  updateElement(scrollTop) {
+  updateElement() {
     const prevElement = this.getElement();
+    const scrollTop = prevElement.scrollTop;
     const parent = prevElement.parentElement;
     this.removeElement();
 
@@ -18,27 +19,33 @@ export default class Smart extends Abstract {
 
     this.restoreHandlers();
 
-    if (scrollTop) {
-      this.getElement().scrollTop = scrollTop;
-    }
+    this.getElement().scrollTop = scrollTop;
   }
 
-  updateData(update, onlyDataUpdate = false, scrollTop = 0) {
+  updateData(update, onlyDataUpdate = false) {
     if (!update) {
       return;
     }
 
-    this._data = Object.assign(
-      {},
-      this._data,
-      update,
-    );
+    if ('state' in update) {
+      this._data.state = Object.assign(
+        {},
+        this._data.state,
+        update.state,
+      );
+    } else {
+      this._data = Object.assign(
+        {},
+        this._data,
+        update,
+      );
+    }
 
     if (onlyDataUpdate) {
       return;
     }
 
-    this.updateElement(scrollTop);
+    this.updateElement();
   }
 
   restoreHandlers() {

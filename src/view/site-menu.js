@@ -34,17 +34,22 @@ export default class SiteMenu extends Abstract {
     this._callback.menuClick(menuItem);
 
     if (menuItem === 'stats') {
-      this._setActiveMenuItem();
+      this._setStatsActive();
     } else {
-      this._unsetActiveMenuItem();
+      this._unsetStatsActive();
     }
   }
 
-  _setActiveMenuItem() {
+  _setStatsActive() {
     this._statsMenuItem.classList.add('main-navigation__additional--active');
+
+    const currentActiveItem = this.getElement().querySelector('.main-navigation__item--active');
+    if (currentActiveItem) {
+      currentActiveItem.classList.remove('main-navigation__item--active');
+    }
   }
 
-  _unsetActiveMenuItem() {
+  _unsetStatsActive() {
     this._statsMenuItem.classList.remove('main-navigation__additional--active');
   }
 }

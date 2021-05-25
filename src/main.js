@@ -1,7 +1,7 @@
 import FooterStatisticView from './view/footer-statistic';
 import SiteMenuView from './view/site-menu';
-import UserProfileView from './view/user-profile';
 import StatsView from './view/stats';
+import UserProfileView from './view/user-profile';
 
 import FilmListPresenter from './presenter/film-list';
 import FilterPresenter from './presenter/filter';
@@ -12,35 +12,22 @@ import FilterModel from './model/filter';
 
 import {FilterType, MenuItem, UpdateType} from './constants';
 
+import Api from './api';
+
 import {remove, render} from './utils/render';
-import {generateFilms} from './mock/film';
-import {generateComments} from './mock/comment';
+
+const AUTHORIZATION = 'Basic x8zj1qbe6pzt6en';
+const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
 
 const PageMode = {
   FILMS: 'FILMS',
   STATS: 'STATS',
 };
 
-const FILM_AMOUNT = 23;
-
-const films = generateFilms(FILM_AMOUNT);
-console.log(films);
-const comments = generateComments(films);
-console.log(comments);
-
-window.comments = comments;
-
-films.forEach((film) => {
-  comments[film.id].forEach((comment) => {
-    film.comments.push(comment.id);
-  });
-});
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const filmsModel = new FilmsModel();
-filmsModel.setFilms(films);
-
 const filterModel = new FilterModel();
-
 const commentsModel = new CommentModel();
 
 const siteBody = document.body;
@@ -51,13 +38,12 @@ const siteFooter = siteBody.querySelector('.footer');
 render(siteHeader, new UserProfileView(filmsModel.getFilms()));
 
 const siteMenuComponent = new SiteMenuView();
-
 render(siteMain, siteMenuComponent);
 
 const filterPresenter = new FilterPresenter(siteMenuComponent, filmsModel, filterModel);
 filterPresenter.init();
 
-const filmListPresenter = new FilmListPresenter(siteMain, filmsModel, filterModel, commentsModel);
+const filmListPresenter = new FilmListPresenter(siteMain, filmsModel, filterModel, commentsModel, api);
 filmListPresenter.init();
 
 let currentPageMode = PageMode.FILMS;
@@ -67,22 +53,36 @@ const handleSiteMenuClick = (menuItem) => {
   if (menuItem === MenuItem.STATS && currentPageMode === PageMode.FILMS) {
     currentPageMode = PageMode.STATS;
 
-    filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
     filmListPresenter.destroy();
+    filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
 
     statsComponent = new StatsView(filmsModel.getFilms());
     render(siteMain, statsComponent);
   } else if (menuItem !== MenuItem.STATS && currentPageMode === PageMode.STATS) {
+
     currentPageMode = PageMode.FILMS;
 
-    filmListPresenter.init();
-
     remove(statsComponent);
+
+    filmListPresenter.init();
+    filterModel.setFilter(UpdateType.MAJOR, FilterType[menuItem.toUpperCase()]);
   }
 };
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-
 const footerStatisticsContainer = siteFooter.querySelector('.footer__statistics');
 
-render(footerStatisticsContainer, new FooterStatisticView(filmsModel.getFilms()));
+api.getFilms()
+  .then((films) => {
+    filmsModel.setFilms(UpdateType.INIT, films);
+
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+
+    render(footerStatisticsContainer, new FooterStatisticView(filmsModel.getFilms()));
+  })
+  .catch(() => {
+    filmsModel.setFilms(UpdateType.INIT, []);
+
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+
+    render(footerStatisticsContainer, new FooterStatisticView(filmsModel.getFilms()));
+  });
