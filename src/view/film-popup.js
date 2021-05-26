@@ -228,7 +228,7 @@ const createFilmPopupTemplate = (data, comments) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isSaving ? 'disabled' : ''}>${he.encode(commentText)}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isSaving ? 'disabled' : ''}>${commentText}</textarea>
             </label>
 
             ${emotionListTemplate}
@@ -271,6 +271,53 @@ export default class FilmPopup extends Smart {
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
     this.setDeleteCommentButtonClickHandler(this._callback.deleteCommentButtonClick);
     this.setCommentFormSubmitHandler(this._callback.commentFormSubmit);
+  }
+
+  setWatchlistButtonClickHandler(callback) {
+    this._callback.watchlistButtonClick = callback;
+    this.getElement().querySelector('#watchlist').addEventListener('click', this._watchlistButtonClickHandler);
+  }
+
+  setWatchedButtonClickHandler(callback) {
+    this._callback.watchedButtonClick = callback;
+    this.getElement().querySelector('#watched').addEventListener('click', this._watchedButtonClickHandler);
+  }
+
+  setFavoriteButtonClickHandler(callback) {
+    this._callback.favoriteButtonClick = callback;
+    this.getElement().querySelector('#favorite').addEventListener('click', this._favoriteButtonClickHandler);
+  }
+
+  setCloseButtonClickHandler(callback) {
+    this._callback.closeButtonClick = callback;
+    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._closeButtonClickHandler);
+  }
+
+  setDeleteCommentButtonClickHandler(callback) {
+    this._callback.deleteCommentButtonClick = callback;
+    this.getElement().querySelector('.film-details__comments-list').addEventListener('click', this._deleteCommentButtonClickHandler);
+  }
+
+  setCommentFormSubmitHandler(callback) {
+    this._callback.commentFormSubmit = callback;
+    this.getElement().addEventListener('keydown', this._commentFormSubmitHandler);
+  }
+
+  _setCommentInputHandler() {
+    this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._commentInputHandler);
+  }
+
+  _setEmotionChangeHandler() {
+    const inputs = this.getElement().querySelectorAll('.film-details__emoji-item');
+
+    for (const input of inputs) {
+      input.addEventListener('change', this._commentEmotionChangeHandler);
+    }
+  }
+
+  _setInnerHandlers() {
+    this._setCommentInputHandler();
+    this._setEmotionChangeHandler();
   }
 
   _watchlistButtonClickHandler(evt) {
@@ -334,58 +381,11 @@ export default class FilmPopup extends Smart {
     this.updateData({
       state: {
         ...this._data.state,
-        commentText: evt.target.value,
+        commentText: he.encode(evt.target.value),
       },
     },
     true,
     );
-  }
-
-  setWatchlistButtonClickHandler(callback) {
-    this._callback.watchlistButtonClick = callback;
-    this.getElement().querySelector('#watchlist').addEventListener('change', this._watchlistButtonClickHandler);
-  }
-
-  setWatchedButtonClickHandler(callback) {
-    this._callback.watchedButtonClick = callback;
-    this.getElement().querySelector('#watched').addEventListener('change', this._watchedButtonClickHandler);
-  }
-
-  setFavoriteButtonClickHandler(callback) {
-    this._callback.favoriteButtonClick = callback;
-    this.getElement().querySelector('#favorite').addEventListener('change', this._favoriteButtonClickHandler);
-  }
-
-  setCloseButtonClickHandler(callback) {
-    this._callback.closeButtonClick = callback;
-    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._closeButtonClickHandler);
-  }
-
-  setDeleteCommentButtonClickHandler(callback) {
-    this._callback.deleteCommentButtonClick = callback;
-    this.getElement().querySelector('.film-details__comments-list').addEventListener('click', this._deleteCommentButtonClickHandler);
-  }
-
-  setCommentFormSubmitHandler(callback) {
-    this._callback.commentFormSubmit = callback;
-    this.getElement().addEventListener('keydown', this._commentFormSubmitHandler);
-  }
-
-  _setCommentInputHandler() {
-    this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._commentInputHandler);
-  }
-
-  _setEmotionChangeHandler() {
-    const inputs = this.getElement().querySelectorAll('.film-details__emoji-item');
-
-    for (const input of inputs) {
-      input.addEventListener('change', this._commentEmotionChangeHandler);
-    }
-  }
-
-  _setInnerHandlers() {
-    this._setCommentInputHandler();
-    this._setEmotionChangeHandler();
   }
 
   static parseFilmToData(film) {

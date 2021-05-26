@@ -196,6 +196,20 @@ export default class Stats extends Smart {
     }
   }
 
+  _setChart() {
+    if (this._chart !== null) {
+      this._chart = null;
+    }
+
+    const statsCtx = this.getElement().querySelector('.statistic__chart');
+
+    this._chart = renderChart(statsCtx, this._data);
+  }
+
+  _setDateChangeHandler() {
+    this.getElement().querySelector('.statistic__filters').addEventListener('change', this._dateChangeHandler);
+  }
+
   _dateChangeHandler(evt) {
     if (evt.target.tagName !== 'INPUT') {
       return;
@@ -210,19 +224,5 @@ export default class Stats extends Smart {
       dateFrom,
       activeDateInput,
     });
-  }
-
-  _setDateChangeHandler() {
-    this.getElement().querySelector('.statistic__filters').addEventListener('change', this._dateChangeHandler);
-  }
-
-  _setChart() {
-    if (this._chart !== null) {
-      this._chart = null;
-    }
-
-    const statsCtx = this.getElement().querySelector('.statistic__chart');
-
-    this._chart = renderChart(statsCtx, this._data);
   }
 }

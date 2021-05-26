@@ -23,6 +23,11 @@ export default class Sorting extends Abstract {
     return createSortingTemplate(this._currentSortingType);
   }
 
+  setSortingTypeChangeHandler(callback) {
+    this._callback.sortingTypeChange = callback;
+    this.getElement().addEventListener('click', this._sortingTypeChangeHandler);
+  }
+
   _sortingTypeChangeHandler(evt) {
     if (evt.target.tagName !== 'A') {
       return;
@@ -30,10 +35,5 @@ export default class Sorting extends Abstract {
 
     evt.preventDefault();
     this._callback.sortingTypeChange(evt.target.dataset.sortingType);
-  }
-
-  setSortingTypeChangeHandler(callback) {
-    this._callback.sortingTypeChange = callback;
-    this.getElement().addEventListener('click', this._sortingTypeChangeHandler);
   }
 }

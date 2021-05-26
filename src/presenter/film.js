@@ -48,7 +48,7 @@ export default class Film {
     this._film = null;
   }
 
-  init(film) {
+  init(film, needToResetPopupState) {
     this._film = film;
 
     const prevFilmCardComponent = this._filmCardComponent;
@@ -64,17 +64,22 @@ export default class Film {
     }
 
     if (this._mode === Mode.POPUP) {
-      this._filmPopupComponent.updateData(this._film);
-      // this._filmPopupComponent.updateData({
-      //   'state': {
-      //     commentText: '',
-      //     deletingCommentId: null,
-      //     emotion: null,
-      //     isDisabled: false,
-      //     isDeleting: false,
-      //     isSaving: false,
-      //   },
-      // });
+      const updatedDataForPopup = needToResetPopupState ? Object.assign(
+        {},
+        this._film,
+        {
+          'state': {
+            commentText: '',
+            deletingCommentId: null,
+            emotion: null,
+            isDisabled: false,
+            isDeleting: false,
+            isSaving: false,
+          },
+        }) :
+        this._film;
+
+      this._filmPopupComponent.updateData(updatedDataForPopup);
     }
   }
 
@@ -151,18 +156,11 @@ export default class Film {
     this._api.getComments(this._film.id)
       .then((comments) => {
         this._commentsModel.setComments(comments);
-
-        this._filmPopupComponent = new FilmPopupView(this._film, this._commentsModel);
-        this._setFilmPopupHandlers();
-
-        this._siteBody.classList.add('hide-overflow');
-        render(this._siteBody, this._filmPopupComponent);
-
-        document.addEventListener('keydown', this._escKeyDownHandler);
       })
       .catch(() => {
         this._commentsModel.setComments([]);
-
+      })
+      .finally(() => {
         this._filmPopupComponent = new FilmPopupView(this._film, this._commentsModel);
         this._setFilmPopupHandlers();
 
@@ -263,7 +261,7 @@ export default class Film {
   _handleCommentFormSubmit(comment) {
     this._changeData(
       UserAction.ADD_COMMENT,
-      UpdateType.PATCH,
+      UpdateType.COMMENT,
       Object.assign(
         {},
         this._film,

@@ -4,10 +4,12 @@ import LoadingView from '../view/loading';
 import NoFilmView from '../view/no-film';
 import ShowMoreButtonView from '../view/show-more-button';
 import SortingView from '../view/sorting';
+import UserProfileView from '../view/user-profile';
 
 import FilmPresenter, {State as FilmPresenterViewState, AbortingElementClass as FilmPresenterAbortingElementClass} from './film';
 
 import {SortingType, UpdateType, UserAction} from '../constants';
+
 import {getMostCommentedFilms, getTopRatedFilms, getSortedFilmsByDate, getSortedFilmsByRating} from '../utils/film';
 import {remove, render, RenderPosition} from '../utils/render';
 import {filter} from '../utils/filter';
@@ -20,12 +22,14 @@ const ID_PREFIX = {
 };
 
 export default class FilmList {
-  constructor(filmListContainer, filmsModel, filterModel, commentsModel, api) {
+  constructor(userProfileContainer, filmListContainer, filmsModel, filterModel, commentsModel, api) {
+    this._userProfileContainer = userProfileContainer;
     this._filmListContainer = filmListContainer;
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
     this._commentsModel = commentsModel;
 
+    this._userProfileComponent = null;
     this._filmListComponent = null;
     this._loadingComponent = new LoadingView();
     this._noFilmComponent = new NoFilmView();
@@ -126,6 +130,8 @@ export default class FilmList {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
+        this._renderUserProfile();
+
         if (data.id in this._filmPresenter) {
           this._filmPresenter[data.id].init(data);
         }
@@ -139,6 +145,8 @@ export default class FilmList {
         }
         break;
       case UpdateType.MINOR:
+        this._renderUserProfile();
+
         this._clearFilmList();
         this._renderFilmList();
         break;
@@ -147,9 +155,16 @@ export default class FilmList {
         this._renderFilmList();
         break;
       case UpdateType.INIT:
+        this._renderUserProfile();
+
         this._isLoading = false;
         remove(this._loadingComponent);
         this._renderFilmList();
+        break;
+      case UpdateType.COMMENT:
+        if (data.id in this._filmPresenter) {
+          this._filmPresenter[data.id].init(data, true);
+        }
         break;
     }
   }
@@ -163,6 +178,9 @@ export default class FilmList {
         this._filmsModel.updateFilm(updateType, data);
         break;
       case UpdateType.MAJOR:
+        this._filmsModel.updateFilm(updateType, data);
+        break;
+      case UpdateType.COMMENT:
         this._filmsModel.updateFilm(updateType, data);
         break;
     }
@@ -183,6 +201,16 @@ export default class FilmList {
 
     this._clearFilmList({resetRenderedFilmCount: true});
     this._renderFilmList();
+  }
+
+  _renderUserProfile() {
+    if (this._userProfileComponent) {
+      remove(this._userProfileComponent);
+      this._userProfileComponent = null;
+    }
+
+    this._userProfileComponent = new UserProfileView(this._filmsModel.getFilms());
+    render(this._userProfileContainer, this._userProfileComponent);
   }
 
   _renderLoading() {

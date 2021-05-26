@@ -14,6 +14,7 @@ export default class SiteMenu extends Abstract {
 
     this._menuClickHandler = this._menuClickHandler.bind(this);
   }
+
   getTemplate() {
     return createSiteMenuTemplate();
   }
@@ -21,6 +22,19 @@ export default class SiteMenu extends Abstract {
   setMenuClickHandler(callback) {
     this._callback.menuClick = callback;
     this.getElement().addEventListener('click', this._menuClickHandler);
+  }
+
+  _setStatsActive() {
+    this._statsMenuItem.classList.add('main-navigation__additional--active');
+
+    const currentActiveItem = this.getElement().querySelector('.main-navigation__item--active');
+    if (currentActiveItem) {
+      currentActiveItem.classList.remove('main-navigation__item--active');
+    }
+  }
+
+  _unsetStatsActive() {
+    this._statsMenuItem.classList.remove('main-navigation__additional--active');
   }
 
   _menuClickHandler(evt) {
@@ -38,18 +52,5 @@ export default class SiteMenu extends Abstract {
     } else {
       this._unsetStatsActive();
     }
-  }
-
-  _setStatsActive() {
-    this._statsMenuItem.classList.add('main-navigation__additional--active');
-
-    const currentActiveItem = this.getElement().querySelector('.main-navigation__item--active');
-    if (currentActiveItem) {
-      currentActiveItem.classList.remove('main-navigation__item--active');
-    }
-  }
-
-  _unsetStatsActive() {
-    this._statsMenuItem.classList.remove('main-navigation__additional--active');
   }
 }

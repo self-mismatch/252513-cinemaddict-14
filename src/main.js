@@ -1,7 +1,6 @@
 import FooterStatisticView from './view/footer-statistic';
 import SiteMenuView from './view/site-menu';
 import StatsView from './view/stats';
-import UserProfileView from './view/user-profile';
 
 import FilmListPresenter from './presenter/film-list';
 import FilterPresenter from './presenter/filter';
@@ -35,15 +34,13 @@ const siteHeader = siteBody.querySelector('.header');
 const siteMain = siteBody.querySelector('.main');
 const siteFooter = siteBody.querySelector('.footer');
 
-render(siteHeader, new UserProfileView(filmsModel.getFilms()));
-
 const siteMenuComponent = new SiteMenuView();
 render(siteMain, siteMenuComponent);
 
 const filterPresenter = new FilterPresenter(siteMenuComponent, filmsModel, filterModel);
 filterPresenter.init();
 
-const filmListPresenter = new FilmListPresenter(siteMain, filmsModel, filterModel, commentsModel, api);
+const filmListPresenter = new FilmListPresenter(siteHeader, siteMain, filmsModel, filterModel, commentsModel, api);
 filmListPresenter.init();
 
 let currentPageMode = PageMode.FILMS;
@@ -74,14 +71,11 @@ const footerStatisticsContainer = siteFooter.querySelector('.footer__statistics'
 api.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
-
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-
-    render(footerStatisticsContainer, new FooterStatisticView(filmsModel.getFilms()));
   })
   .catch(() => {
     filmsModel.setFilms(UpdateType.INIT, []);
-
+  })
+  .finally(() => {
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
     render(footerStatisticsContainer, new FooterStatisticView(filmsModel.getFilms()));

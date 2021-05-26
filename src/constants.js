@@ -29,6 +29,7 @@ const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT: 'INIT',
+  COMMENT: 'COMMENT',
 };
 
 const UserAction = {
