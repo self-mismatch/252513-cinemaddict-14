@@ -2,28 +2,30 @@ import Abstract from './abstract';
 
 import {SortingType} from '../constants';
 
-const createSortingTemplate = () => {
+const createSortingTemplate = (currentSortingType) => {
   return `<ul class="sort">
-    <li><a href="#" class="sort__button sort__button--active" data-sorting-type="${SortingType.DEFAULT}">Sort by default</a></li>
-    <li><a href="#" class="sort__button" data-sorting-type="${SortingType.DATE}">Sort by date</a></li>
-    <li><a href="#" class="sort__button" data-sorting-type="${SortingType.RATING}">Sort by rating</a></li>
+    <li><a href="#" class="sort__button ${currentSortingType === SortingType.DEFAULT ? 'sort__button--active' : ''}" data-sorting-type="${SortingType.DEFAULT}">Sort by default</a></li>
+    <li><a href="#" class="sort__button ${currentSortingType === SortingType.DATE ? 'sort__button--active' : ''}" data-sorting-type="${SortingType.DATE}">Sort by date</a></li>
+    <li><a href="#" class="sort__button ${currentSortingType === SortingType.RATING ? 'sort__button--active' : ''}" data-sorting-type="${SortingType.RATING}">Sort by rating</a></li>
   </ul>`;
 };
 
 export default class Sorting extends Abstract {
-  constructor() {
+  constructor(currentSortingType) {
     super();
+
+    this._currentSortingType = currentSortingType;
 
     this._sortingTypeChangeHandler = this._sortingTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createSortingTemplate();
+    return createSortingTemplate(this._currentSortingType);
   }
 
-  _changeActiveSortingButton(button) {
-    this.getElement().querySelector('.sort__button--active').classList.remove('sort__button--active');
-    button.classList.add('sort__button--active');
+  setSortingTypeChangeHandler(callback) {
+    this._callback.sortingTypeChange = callback;
+    this.getElement().addEventListener('click', this._sortingTypeChangeHandler);
   }
 
   _sortingTypeChangeHandler(evt) {
@@ -32,12 +34,6 @@ export default class Sorting extends Abstract {
     }
 
     evt.preventDefault();
-    this._changeActiveSortingButton(evt.target);
     this._callback.sortingTypeChange(evt.target.dataset.sortingType);
-  }
-
-  setSortingTypeChangeHandler(callback) {
-    this._callback.sortingTypeChange = callback;
-    this.getElement().addEventListener('click', this._sortingTypeChangeHandler);
   }
 }

@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card';
 import FilmPopupView from '../view/film-popup';
 
+import {UserAction, UpdateType, FilterType} from '../constants';
 import {remove, render, replace} from '../utils/render';
 
 const Mode = {
@@ -8,11 +9,25 @@ const Mode = {
   POPUP: 'POPUP',
 };
 
+export const State = {
+  ABORTING: 'ABORTING',
+  DELETING: 'DELETING',
+  SAVING: 'SAVING',
+};
+
+export const AbortingElementClass = {
+  DELETING_COMMENT: 'film-details__comment',
+  ADDING_COMMENT: 'film-details__new-comment',
+};
+
 export default class Film {
-  constructor(filmListContainer, changeFilm, changeMode) {
+  constructor(filmListContainer, changeData, changeMode, filterModel, commentsModel, api) {
     this._filmListContainer = filmListContainer;
-    this._changeFilm = changeFilm;
+    this._changeData = changeData;
     this._changeMode = changeMode;
+    this._filterModel = filterModel;
+    this._commentsModel = commentsModel;
+    this._api = api;
 
     this._siteBody = document.body;
 
@@ -26,12 +41,14 @@ export default class Film {
     this._handleFavoriteButtonClick = this._handleFavoriteButtonClick.bind(this);
     this._handleFilmCardClick = this._handleFilmCardClick.bind(this);
     this._handlePopupCloseButtonClick = this._handlePopupCloseButtonClick.bind(this);
+    this._handlePopupDeleteCommentButtonClick = this._handlePopupDeleteCommentButtonClick.bind(this);
+    this._handleCommentFormSubmit = this._handleCommentFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
     this._film = null;
   }
 
-  init(film) {
+  init(film, needToResetPopupState) {
     this._film = film;
 
     const prevFilmCardComponent = this._filmCardComponent;
@@ -44,6 +61,25 @@ export default class Film {
     } else {
       replace(this._filmCardComponent, prevFilmCardComponent);
       remove(prevFilmCardComponent);
+    }
+
+    if (this._mode === Mode.POPUP) {
+      const updatedDataForPopup = needToResetPopupState ? Object.assign(
+        {},
+        this._film,
+        {
+          'state': {
+            commentText: '',
+            deletingCommentId: null,
+            emotion: null,
+            isDisabled: false,
+            isDeleting: false,
+            isSaving: false,
+          },
+        }) :
+        this._film;
+
+      this._filmPopupComponent.updateData(updatedDataForPopup);
     }
   }
 
@@ -61,11 +97,46 @@ export default class Film {
     }
   }
 
+  setViewState(state, deletingCommentId, shakingElementSelector) {
+    const resetFormState = () => {
+      this._filmPopupComponent.updateData({
+        'state': {
+          deletingCommentId: null,
+          isSaving: false,
+          isDeleting: false,
+          isDisabled: false,
+        },
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._filmPopupComponent.updateData({
+          'state': {
+            isDisabled: true,
+            isSaving: true,
+          },
+        });
+        break;
+      case State.DELETING:
+        this._filmPopupComponent.updateData({
+          'state': {
+            isDisabled: true,
+            isDeleting: true,
+            deletingCommentId,
+          },
+        });
+        break;
+      case State.ABORTING:
+        this._filmPopupComponent.shake(resetFormState, shakingElementSelector);
+        break;
+    }
+  }
+
   _setFilmCardHandlers() {
     this._filmCardComponent.setWatchlistButtonClickHandler(this._handleWatchlistButtonClick);
     this._filmCardComponent.setWatchedButtonClickHandler(this._handleWatchedButtonClick);
     this._filmCardComponent.setFavoriteButtonClickHandler(this._handleFavoriteButtonClick);
-
     this._filmCardComponent.setOpenPopupClickHandler(this._handleFilmCardClick);
   }
 
@@ -73,20 +144,31 @@ export default class Film {
     this._filmPopupComponent.setWatchlistButtonClickHandler(this._handleWatchlistButtonClick);
     this._filmPopupComponent.setWatchedButtonClickHandler(this._handleWatchedButtonClick);
     this._filmPopupComponent.setFavoriteButtonClickHandler(this._handleFavoriteButtonClick);
-
     this._filmPopupComponent.setCloseButtonClickHandler(this._handlePopupCloseButtonClick);
+    this._filmPopupComponent.setDeleteCommentButtonClickHandler(this._handlePopupDeleteCommentButtonClick);
+    this._filmPopupComponent.setCommentFormSubmitHandler(this._handleCommentFormSubmit);
   }
 
   _showPopup() {
     this._changeMode();
     this._mode = Mode.POPUP;
 
-    this._filmPopupComponent = new FilmPopupView(this._film);
-    this._siteBody.classList.add('hide-overflow');
-    render(this._siteBody, this._filmPopupComponent);
+    this._api.getComments(this._film.id)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
+      })
+      .catch(() => {
+        this._commentsModel.setComments([]);
+      })
+      .finally(() => {
+        this._filmPopupComponent = new FilmPopupView(this._film, this._commentsModel);
+        this._setFilmPopupHandlers();
 
-    this._setFilmPopupHandlers();
-    document.addEventListener('keydown', this._escKeyDownHandler);
+        this._siteBody.classList.add('hide-overflow');
+        render(this._siteBody, this._filmPopupComponent);
+
+        document.addEventListener('keydown', this._escKeyDownHandler);
+      });
   }
 
   _hidePopup() {
@@ -100,7 +182,11 @@ export default class Film {
   }
 
   _handleWatchlistButtonClick() {
-    this._changeFilm(
+    const updateType = this._filterModel.getFilter() === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      updateType,
       Object.assign(
         {},
         this._film,
@@ -115,7 +201,11 @@ export default class Film {
   }
 
   _handleWatchedButtonClick() {
-    this._changeFilm(
+    const updateType = this._filterModel.getFilter() === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      updateType,
       Object.assign(
         {},
         this._film,
@@ -130,7 +220,11 @@ export default class Film {
   }
 
   _handleFavoriteButtonClick() {
-    this._changeFilm(
+    const updateType = this._filterModel.getFilter() === FilterType.ALL ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this._changeData(
+      UserAction.UPDATE_FILM,
+      updateType,
       Object.assign(
         {},
         this._film,
@@ -150,6 +244,31 @@ export default class Film {
 
   _handlePopupCloseButtonClick() {
     this._hidePopup();
+  }
+
+  _handlePopupDeleteCommentButtonClick(commentId) {
+    this._changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      Object.assign(
+        {},
+        this._film,
+      ),
+      commentId,
+    );
+  }
+
+  _handleCommentFormSubmit(comment) {
+    this._changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.COMMENT,
+      Object.assign(
+        {},
+        this._film,
+      ),
+      null,
+      comment,
+    );
   }
 
   _escKeyDownHandler(evt) {

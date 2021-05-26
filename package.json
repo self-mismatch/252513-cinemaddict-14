@@ -12,7 +12,6 @@
   "devDependencies": {
     "eslint": "7.13.0",
     "eslint-config-htmlacademy": "3.0.0",
-    "nanoid": "3.1.22",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.0"
@@ -21,6 +20,9 @@
     "node": "10"
   },
   "dependencies": {
-    "dayjs": "1.9.5"
+    "chart.js": "2.9.4",
+    "chartjs-plugin-datalabels": "0.7.0",
+    "dayjs": "1.9.5",
+    "he": "1.2.0"
   }
 }
