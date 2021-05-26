@@ -33,6 +33,8 @@ export default class Comments extends Observer {
       ...this._comments.slice(index + 1),
     ];
 
+    updateFilm.comments = this._comments.map((comment) => comment.id);
+
     this._notify(updateType, updateFilm);
   }
 
