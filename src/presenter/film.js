@@ -2,6 +2,7 @@ import FilmCardView from '../view/film-card';
 import FilmPopupView from '../view/film-popup';
 
 import {UserAction, UpdateType, FilterType} from '../constants';
+
 import {remove, render, replace} from '../utils/render';
 
 const Mode = {
