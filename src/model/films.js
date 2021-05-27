@@ -73,21 +73,21 @@ export default class Films extends Observer {
       {},
       film,
       {
-        film_info: {
+        'film_info': {
           ...film.filmInfo,
-          age_rating: film.filmInfo.ageRating,
-          alternative_title: film.filmInfo.alternativeTitle,
+          'age_rating': film.filmInfo.ageRating,
+          'alternative_title': film.filmInfo.alternativeTitle,
           genre: film.filmInfo.genres,
           release: {
-            release_country: film.filmInfo.country,
+            'release_country': film.filmInfo.country,
             date: film.filmInfo.releaseDate.toISOString(),
           },
-          total_rating: film.filmInfo.totalRating,
+          'total_rating': film.filmInfo.totalRating,
         },
-        user_details: {
+        'user_details': {
           ...film.userDetails,
-          already_watched: film.userDetails.alreadyWatched,
-          watching_date: film.userDetails.watchingDate,
+          'already_watched': film.userDetails.alreadyWatched,
+          'watching_date': film.userDetails.watchingDate,
         },
       },
     );
