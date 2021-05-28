@@ -32,8 +32,8 @@ export default class Film {
 
     this._siteBody = document.body;
 
-    this._filmCardComponent = null;
-    this._filmPopupComponent = null;
+    this._filmCard = null;
+    this._filmPopup = null;
 
     this._mode = Mode.DEFAULT;
 
@@ -52,16 +52,16 @@ export default class Film {
   init(film, needToResetPopupState) {
     this._film = film;
 
-    const prevFilmCardComponent = this._filmCardComponent;
-    this._filmCardComponent = new FilmCardView(this._film);
+    const prevFilmCard = this._filmCard;
+    this._filmCard = new FilmCardView(this._film);
 
     this._setFilmCardHandlers();
 
-    if (prevFilmCardComponent === null) {
-      render(this._filmListContainer, this._filmCardComponent);
+    if (prevFilmCard === null) {
+      render(this._filmListContainer, this._filmCard);
     } else {
-      replace(this._filmCardComponent, prevFilmCardComponent);
-      remove(prevFilmCardComponent);
+      replace(this._filmCard, prevFilmCard);
+      remove(prevFilmCard);
     }
 
     if (this._mode === Mode.POPUP) {
@@ -80,15 +80,15 @@ export default class Film {
         }) :
         this._film;
 
-      this._filmPopupComponent.updateData(updatedDataForPopup);
+      this._filmPopup.updateData(updatedDataForPopup);
     }
   }
 
   destroy() {
-    remove(this._filmCardComponent);
+    remove(this._filmCard);
 
-    if (this._filmPopupComponent) {
-      remove(this._filmPopupComponent);
+    if (this._filmPopup) {
+      remove(this._filmPopup);
     }
   }
 
@@ -100,7 +100,7 @@ export default class Film {
 
   setViewState(state, deletingCommentId, shakingElementSelector) {
     const resetFormState = () => {
-      this._filmPopupComponent.updateData({
+      this._filmPopup.updateData({
         'state': {
           deletingCommentId: null,
           isSaving: false,
@@ -112,7 +112,7 @@ export default class Film {
 
     switch (state) {
       case State.SAVING:
-        this._filmPopupComponent.updateData({
+        this._filmPopup.updateData({
           'state': {
             isDisabled: true,
             isSaving: true,
@@ -120,7 +120,7 @@ export default class Film {
         });
         break;
       case State.DELETING:
-        this._filmPopupComponent.updateData({
+        this._filmPopup.updateData({
           'state': {
             isDisabled: true,
             isDeleting: true,
@@ -129,25 +129,25 @@ export default class Film {
         });
         break;
       case State.ABORTING:
-        this._filmPopupComponent.shake(resetFormState, shakingElementSelector);
+        this._filmPopup.shake(resetFormState, shakingElementSelector);
         break;
     }
   }
 
   _setFilmCardHandlers() {
-    this._filmCardComponent.setWatchlistButtonClickHandler(this._handleWatchlistButtonClick);
-    this._filmCardComponent.setWatchedButtonClickHandler(this._handleWatchedButtonClick);
-    this._filmCardComponent.setFavoriteButtonClickHandler(this._handleFavoriteButtonClick);
-    this._filmCardComponent.setOpenPopupClickHandler(this._handleFilmCardClick);
+    this._filmCard.setWatchlistButtonClickHandler(this._handleWatchlistButtonClick);
+    this._filmCard.setWatchedButtonClickHandler(this._handleWatchedButtonClick);
+    this._filmCard.setFavoriteButtonClickHandler(this._handleFavoriteButtonClick);
+    this._filmCard.setOpenPopupClickHandler(this._handleFilmCardClick);
   }
 
   _setFilmPopupHandlers() {
-    this._filmPopupComponent.setWatchlistButtonClickHandler(this._handleWatchlistButtonClick);
-    this._filmPopupComponent.setWatchedButtonClickHandler(this._handleWatchedButtonClick);
-    this._filmPopupComponent.setFavoriteButtonClickHandler(this._handleFavoriteButtonClick);
-    this._filmPopupComponent.setCloseButtonClickHandler(this._handlePopupCloseButtonClick);
-    this._filmPopupComponent.setDeleteCommentButtonClickHandler(this._handlePopupDeleteCommentButtonClick);
-    this._filmPopupComponent.setCommentFormSubmitHandler(this._handleCommentFormSubmit);
+    this._filmPopup.setWatchlistButtonClickHandler(this._handleWatchlistButtonClick);
+    this._filmPopup.setWatchedButtonClickHandler(this._handleWatchedButtonClick);
+    this._filmPopup.setFavoriteButtonClickHandler(this._handleFavoriteButtonClick);
+    this._filmPopup.setCloseButtonClickHandler(this._handlePopupCloseButtonClick);
+    this._filmPopup.setDeleteCommentButtonClickHandler(this._handlePopupDeleteCommentButtonClick);
+    this._filmPopup.setCommentFormSubmitHandler(this._handleCommentFormSubmit);
   }
 
   _showPopup() {
@@ -162,11 +162,11 @@ export default class Film {
         this._commentsModel.setComments([]);
       })
       .finally(() => {
-        this._filmPopupComponent = new FilmPopupView(this._film, this._commentsModel);
+        this._filmPopup = new FilmPopupView(this._film, this._commentsModel);
         this._setFilmPopupHandlers();
 
         this._siteBody.classList.add('hide-overflow');
-        render(this._siteBody, this._filmPopupComponent);
+        render(this._siteBody, this._filmPopup);
 
         document.addEventListener('keydown', this._escKeyDownHandler);
       });
@@ -176,8 +176,8 @@ export default class Film {
     this._mode = Mode.DEFAULT;
 
     this._siteBody.classList.remove('hide-overflow');
-    remove(this._filmPopupComponent);
-    this._filmPopupComponent = null;
+    remove(this._filmPopup);
+    this._filmPopup = null;
 
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }

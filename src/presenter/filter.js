@@ -11,7 +11,7 @@ export default class Filter {
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
 
-    this._filterComponent = null;
+    this._filter = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
@@ -22,18 +22,18 @@ export default class Filter {
 
   init() {
     const filters = this._getFilters();
-    const prevFilterComponent = this._filterComponent;
+    const prevFilter = this._filter;
 
-    this._filterComponent = new FilterView(filters, this._filterModel.getFilter());
-    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filter = new FilterView(filters, this._filterModel.getFilter());
+    this._filter.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
-    if (prevFilterComponent === null) {
-      render(this._filterContainer, this._filterComponent, RenderPosition.AFTERBEGIN);
+    if (prevFilter === null) {
+      render(this._filterContainer, this._filter, RenderPosition.AFTERBEGIN);
       return;
     }
 
-    replace(this._filterComponent, prevFilterComponent);
-    remove(prevFilterComponent);
+    replace(this._filter, prevFilter);
+    remove(prevFilter);
   }
 
   _getFilters() {

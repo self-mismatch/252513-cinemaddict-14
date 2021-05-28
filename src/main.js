@@ -44,17 +44,17 @@ const siteHeader = siteBody.querySelector('.header');
 const siteMain = siteBody.querySelector('.main');
 const siteFooter = siteBody.querySelector('.footer');
 
-const siteMenuComponent = new SiteMenuView();
-render(siteMain, siteMenuComponent);
+const siteMenu = new SiteMenuView();
+render(siteMain, siteMenu);
 
-const filterPresenter = new FilterPresenter(siteMenuComponent, filmsModel, filterModel);
+const filterPresenter = new FilterPresenter(siteMenu, filmsModel, filterModel);
 filterPresenter.init();
 
 const filmListPresenter = new FilmListPresenter(siteHeader, siteMain, filmsModel, filterModel, commentsModel, apiWithProvider);
 filmListPresenter.init();
 
 let currentPageMode = PageMode.FILMS;
-let statsComponent = null;
+let stats = null;
 
 const handleSiteMenuClick = (menuItem) => {
   if (menuItem === MenuItem.STATS && currentPageMode === PageMode.FILMS) {
@@ -63,13 +63,13 @@ const handleSiteMenuClick = (menuItem) => {
     filmListPresenter.destroy();
     filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
 
-    statsComponent = new StatsView(filmsModel.getFilms());
-    render(siteMain, statsComponent);
+    stats = new StatsView(filmsModel.getFilms());
+    render(siteMain, stats);
   } else if (menuItem !== MenuItem.STATS && currentPageMode === PageMode.STATS) {
 
     currentPageMode = PageMode.FILMS;
 
-    remove(statsComponent);
+    remove(stats);
 
     filmListPresenter.init();
     filterModel.setFilter(UpdateType.MAJOR, FilterType[menuItem.toUpperCase()]);
@@ -86,7 +86,7 @@ apiWithProvider.getFilms()
     filmsModel.setFilms(UpdateType.INIT, []);
   })
   .finally(() => {
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+    siteMenu.setMenuClickHandler(handleSiteMenuClick);
 
     render(footerStatisticsContainer, new FooterStatisticView(filmsModel.getFilms()));
   });
