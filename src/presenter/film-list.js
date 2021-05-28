@@ -11,7 +11,7 @@ import FilmPresenter, {State as FilmPresenterViewState, AbortingElementClass as 
 import {SortingType, UpdateType, UserAction} from '../constants';
 
 import {getMostCommentedFilms, getTopRatedFilms, getSortedFilmsByDate, getSortedFilmsByRating} from '../utils/film';
-import {RenderPosition, remove, render} from '../utils/render';
+import {remove, render, RenderPosition} from '../utils/render';
 import {filter} from '../utils/filter';
 
 const FILM_COUNT_PER_STEP = 5;

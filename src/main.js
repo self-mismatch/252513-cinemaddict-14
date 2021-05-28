@@ -1,4 +1,5 @@
 import FooterStatisticView from './view/footer-statistic';
+import NotificationView from './view/notification';
 import SiteMenuView from './view/site-menu';
 import StatsView from './view/stats';
 
@@ -11,12 +12,17 @@ import FilterModel from './model/filter';
 
 import {FilterType, MenuItem, UpdateType} from './constants';
 
-import Api from './api';
+import Api from './api/api';
+import Store from './api/store';
+import Provider from './api/provider';
 
-import {remove, render} from './utils/render';
+import {remove, render, RenderPosition} from './utils/render';
 
 const AUTHORIZATION = 'Basic x8zj1qbe6pzt6en';
 const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
+const STORE_PREFIX = 'cinemaddict-localstorage';
+const STORE_VER = 'v14';
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const PageMode = {
   FILMS: 'FILMS',
@@ -24,10 +30,14 @@ const PageMode = {
 };
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const filmsModel = new FilmsModel();
 const filterModel = new FilterModel();
 const commentsModel = new CommentModel();
+
+const noInternetNotification = new NotificationView('No internet connection', 'notification--error');
 
 const siteBody = document.body;
 const siteHeader = siteBody.querySelector('.header');
@@ -40,7 +50,7 @@ render(siteMain, siteMenuComponent);
 const filterPresenter = new FilterPresenter(siteMenuComponent, filmsModel, filterModel);
 filterPresenter.init();
 
-const filmListPresenter = new FilmListPresenter(siteHeader, siteMain, filmsModel, filterModel, commentsModel, api);
+const filmListPresenter = new FilmListPresenter(siteHeader, siteMain, filmsModel, filterModel, commentsModel, apiWithProvider);
 filmListPresenter.init();
 
 let currentPageMode = PageMode.FILMS;
@@ -68,7 +78,7 @@ const handleSiteMenuClick = (menuItem) => {
 
 const footerStatisticsContainer = siteFooter.querySelector('.footer__statistics');
 
-api.getFilms()
+apiWithProvider.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
   })
@@ -80,3 +90,21 @@ api.getFilms()
 
     render(footerStatisticsContainer, new FooterStatisticView(filmsModel.getFilms()));
   });
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(' [offline]', '');
+  siteBody.classList.remove('has-notification');
+  remove(noInternetNotification);
+
+  apiWithProvider.sync();
+});
+
+window.addEventListener('offline', () => {
+  document.title += ' [offline]';
+  siteBody.classList.add('has-notification');
+  render(siteBody, noInternetNotification, RenderPosition.AFTERBEGIN);
+});
