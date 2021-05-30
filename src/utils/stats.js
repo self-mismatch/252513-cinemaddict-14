@@ -1,3 +1,5 @@
+import {StatsDate} from '../constants';
+
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
@@ -10,7 +12,17 @@ const getWatchedFilms = (films) => {
 const getWatchedFilmsInDateRange = (films, dateFrom) => {
   const watchedFilms = getWatchedFilms(films);
 
-  return dateFrom !== 'all' ? watchedFilms.filter((film) => dateFrom.isSameOrBefore(dayjs(film.userDetails.watchingDate))) : watchedFilms;
+  let formattedDateFrom;
+
+  if (dateFrom === StatsDate.ALL_TIME) {
+    formattedDateFrom = null;
+  } else if (dateFrom === StatsDate.TODAY) {
+    formattedDateFrom = dayjs().startOf('day');
+  } else {
+    formattedDateFrom = dayjs().subtract(1, dateFrom);
+  }
+
+  return formattedDateFrom ? watchedFilms.filter((film) => formattedDateFrom.isSameOrBefore(dayjs(film.userDetails.watchingDate))) : watchedFilms;
 };
 
 const getGenres = (films) => {

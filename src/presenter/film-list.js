@@ -115,10 +115,6 @@ export default class FilmList {
           });
         break;
       case UserAction.DELETE_COMMENT:
-        console.log(updateFilm);
-        console.log(updateFilm.id);
-        console.log(this._filmPresenter);
-        console.log(this._filmPresenter[updateFilm.id]);
         this._filmPresenter[updateFilm.id].setViewState(FilmPresenterViewState.DELETING, updateCommentId);
         this._api.deleteComment(updateCommentId)
           .then(() => {

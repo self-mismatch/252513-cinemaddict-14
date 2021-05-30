@@ -24,6 +24,14 @@ const SortingType = {
   RATING: 'rating',
 };
 
+const StatsDate = {
+  ALL_TIME: 'all',
+  TODAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
+
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
@@ -38,4 +46,4 @@ const UserAction = {
   UPDATE_FILM: 'UPDATE_FILM',
 };
 
-export {MINUTES_IN_HOUR, MOST_COMMENTED_FILM_AMOUNT, TOP_RATED_FILM_AMOUNT, FilterType, MenuItem, SortingType, UpdateType, UserAction};
+export {MINUTES_IN_HOUR, MOST_COMMENTED_FILM_AMOUNT, TOP_RATED_FILM_AMOUNT, FilterType, MenuItem, SortingType, StatsDate, UpdateType, UserAction};
