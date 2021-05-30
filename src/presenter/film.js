@@ -1,7 +1,7 @@
 import FilmCardView from '../view/film-card';
 import FilmPopupView from '../view/film-popup';
 
-import {UserAction, UpdateType, FilterType} from '../constants';
+import {FilterType, Key, UserAction, UpdateType} from '../constants';
 
 import {remove, render, replace} from '../utils/render';
 
@@ -273,7 +273,7 @@ export default class Film {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (evt.key === Key.ESCAPE) {
       evt.preventDefault();
       this._hidePopup();
     }

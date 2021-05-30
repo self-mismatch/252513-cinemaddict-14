@@ -2,7 +2,7 @@ import he from 'he';
 import Smart from './smart';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {MINUTES_IN_HOUR} from '../constants';
+import {Key, MINUTES_IN_HOUR} from '../constants';
 
 dayjs.extend(relativeTime);
 
@@ -362,7 +362,7 @@ export default class FilmPopup extends Smart {
   }
 
   _commentFormSubmitHandler(evt) {
-    if (evt.keyCode === 13 && evt.metaKey) {
+    if ((evt.metaKey || evt.ctrlKey) && evt.key === Key.ENTER) {
       evt.preventDefault();
 
       this._callback.commentFormSubmit(FilmPopup.parseDataToComment(this._data));

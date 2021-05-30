@@ -18,6 +18,11 @@ const MenuItem = {
   STATS: 'stats',
 };
 
+const Key = {
+  ENTER: 'Enter',
+  ESCAPE: 'Escape',
+};
+
 const SortingType = {
   DEFAULT: 'default',
   DATE: 'date',
@@ -46,4 +51,4 @@ const UserAction = {
   UPDATE_FILM: 'UPDATE_FILM',
 };
 
-export {MINUTES_IN_HOUR, MOST_COMMENTED_FILM_AMOUNT, TOP_RATED_FILM_AMOUNT, FilterType, MenuItem, SortingType, StatsDate, UpdateType, UserAction};
+export {MINUTES_IN_HOUR, MOST_COMMENTED_FILM_AMOUNT, TOP_RATED_FILM_AMOUNT, FilterType, MenuItem, Key, SortingType, StatsDate, UpdateType, UserAction};
