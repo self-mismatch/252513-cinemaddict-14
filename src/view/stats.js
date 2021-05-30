@@ -159,7 +159,7 @@ export default class Stats extends Smart {
 
     this._data = {
       films,
-      dateFrom: null,
+      dateFrom: StatsDate.ALL_TIME,
       activeDateInput: StatsDate.ALL_TIME,
     };
 

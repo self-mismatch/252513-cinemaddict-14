@@ -97,6 +97,62 @@ export default class FilmList {
     return filteredFilms;
   }
 
+  _updateFilm(film, needToResetPopupState = false) {
+    if (film.id in this._filmPresenter) {
+      this._filmPresenter[film.id].init(film, needToResetPopupState);
+    }
+
+    if (`${ID_PREFIX.TOP_RATED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.TOP_RATED}_${film.id}`].init(film, needToResetPopupState);
+    }
+
+    if (`${ID_PREFIX.MOST_COMMENTED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.MOST_COMMENTED}_${film.id}`].init(film, needToResetPopupState);
+    }
+  }
+
+  _setFilmSavingState(film) {
+    if (film.id in this._filmPresenter) {
+      this._filmPresenter[film.id].setViewState(FilmPresenterViewState.SAVING);
+    }
+
+    if (`${ID_PREFIX.TOP_RATED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.TOP_RATED}_${film.id}`].setViewState(FilmPresenterViewState.SAVING);
+    }
+
+    if (`${ID_PREFIX.MOST_COMMENTED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.MOST_COMMENTED}_${film.id}`].setViewState(FilmPresenterViewState.SAVING);
+    }
+  }
+
+  _setFilmDeletingState(film, updateCommentId) {
+    if (film.id in this._filmPresenter) {
+      this._filmPresenter[film.id].setViewState(FilmPresenterViewState.DELETING, updateCommentId);
+    }
+
+    if (`${ID_PREFIX.TOP_RATED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.TOP_RATED}_${film.id}`].setViewState(FilmPresenterViewState.DELETING, updateCommentId);
+    }
+
+    if (`${ID_PREFIX.MOST_COMMENTED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.MOST_COMMENTED}_${film.id}`].setViewState(FilmPresenterViewState.DELETING, updateCommentId);
+    }
+  }
+
+  _setFilmAbortingState(film, updateCommentId, abortingSelector) {
+    if (film.id in this._filmPresenter) {
+      this._filmPresenter[film.id].setViewState(FilmPresenterViewState.ABORTING, updateCommentId, abortingSelector);
+    }
+
+    if (`${ID_PREFIX.TOP_RATED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.TOP_RATED}_${film.id}`].setViewState(FilmPresenterViewState.ABORTING, updateCommentId, abortingSelector);
+    }
+
+    if (`${ID_PREFIX.MOST_COMMENTED}_${film.id}` in this._filmPresenter) {
+      this._filmPresenter[`${ID_PREFIX.MOST_COMMENTED}_${film.id}`].setViewState(FilmPresenterViewState.ABORTING, updateCommentId, abortingSelector);
+    }
+  }
+
   _handleViewAction(actionType, updateType, updateFilm, updateCommentId, updateComment) {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
@@ -105,23 +161,24 @@ export default class FilmList {
         });
         break;
       case UserAction.ADD_COMMENT:
-        this._filmPresenter[updateFilm.id].setViewState(FilmPresenterViewState.SAVING);
+        this._setFilmSavingState(updateFilm);
+
         this._api.addComment(updateFilm, updateComment)
           .then((response) => {
             this._commentsModel.addComment(updateType, response);
           })
           .catch(() => {
-            this._filmPresenter[updateFilm.id].setViewState(FilmPresenterViewState.ABORTING, null, `.${FilmPresenterAbortingElementClass.ADDING_COMMENT}`);
+            this._setFilmAbortingState(updateFilm, null, `.${FilmPresenterAbortingElementClass.ADDING_COMMENT}`);
           });
         break;
       case UserAction.DELETE_COMMENT:
-        this._filmPresenter[updateFilm.id].setViewState(FilmPresenterViewState.DELETING, updateCommentId);
+        this._setFilmDeletingState(updateFilm, updateCommentId);
         this._api.deleteComment(updateCommentId)
           .then(() => {
             this._commentsModel.deleteComment(updateType, updateFilm, updateCommentId);
           })
           .catch(() => {
-            this._filmPresenter[updateFilm.id].setViewState(FilmPresenterViewState.ABORTING, updateCommentId, `.${FilmPresenterAbortingElementClass.DELETING_COMMENT}[data-comment-id="${updateCommentId}"]`);
+            this._setFilmAbortingState(updateFilm, updateCommentId, `.${FilmPresenterAbortingElementClass.DELETING_COMMENT}[data-comment-id="${updateCommentId}"]`);
           });
         break;
     }
@@ -132,17 +189,7 @@ export default class FilmList {
       case UpdateType.PATCH:
         this._renderUserProfile();
 
-        if (data.id in this._filmPresenter) {
-          this._filmPresenter[data.id].init(data);
-        }
-
-        if (`${ID_PREFIX.TOP_RATED}_${data.id}` in this._filmPresenter) {
-          this._filmPresenter[`${ID_PREFIX.TOP_RATED}_${data.id}`].init(data);
-        }
-
-        if (`${ID_PREFIX.MOST_COMMENTED}_${data.id}` in this._filmPresenter) {
-          this._filmPresenter[`${ID_PREFIX.MOST_COMMENTED}_${data.id}`].init(data);
-        }
+        this._updateFilm(data);
         break;
       case UpdateType.MINOR:
         this._renderUserProfile();
@@ -162,9 +209,7 @@ export default class FilmList {
         this._renderFilmList();
         break;
       case UpdateType.COMMENT:
-        if (data.id in this._filmPresenter) {
-          this._filmPresenter[data.id].init(data, true);
-        }
+        this._updateFilm(data, true);
         break;
     }
   }

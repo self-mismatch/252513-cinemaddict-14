@@ -64,24 +64,26 @@ export default class Film {
       remove(prevFilmCard);
     }
 
-    if (this._mode === Mode.POPUP) {
-      const updatedDataForPopup = needToResetPopupState ? Object.assign(
-        {},
-        this._film,
-        {
-          'state': {
-            commentText: '',
-            deletingCommentId: null,
-            emotion: null,
-            isDisabled: false,
-            isDeleting: false,
-            isSaving: false,
-          },
-        }) :
-        this._film;
-
-      this._filmPopup.updateData(updatedDataForPopup);
+    if (this._mode === Mode.DEFAULT) {
+      return;
     }
+
+    const updatedDataForPopup = needToResetPopupState ? Object.assign(
+      {},
+      this._film,
+      {
+        'state': {
+          commentText: '',
+          deletingCommentId: null,
+          emotion: null,
+          isDisabled: false,
+          isDeleting: false,
+          isSaving: false,
+        },
+      }) :
+      this._film;
+
+    this._filmPopup.updateData(updatedDataForPopup);
   }
 
   destroy() {
@@ -93,12 +95,16 @@ export default class Film {
   }
 
   resetView() {
-    if (this._mode !== Mode.DEFAULT) {
+    if (this._mode === Mode.POPUP) {
       this._hidePopup();
     }
   }
 
   setViewState(state, deletingCommentId, shakingElementSelector) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
     const resetFormState = () => {
       this._filmPopup.updateData({
         'state': {

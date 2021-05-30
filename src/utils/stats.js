@@ -9,18 +9,21 @@ const getWatchedFilms = (films) => {
   return films.filter((film) => film.userDetails.alreadyWatched);
 };
 
+const getFormattedDateFrom = (dateFrom) => {
+  switch (dateFrom) {
+    case StatsDate.ALL_TIME:
+      return null;
+    case StatsDate.TODAY:
+      return dayjs().startOf('day');
+    default:
+      return dayjs().subtract(1, dateFrom);
+  }
+};
+
 const getWatchedFilmsInDateRange = (films, dateFrom) => {
   const watchedFilms = getWatchedFilms(films);
 
-  let formattedDateFrom;
-
-  if (dateFrom === StatsDate.ALL_TIME) {
-    formattedDateFrom = null;
-  } else if (dateFrom === StatsDate.TODAY) {
-    formattedDateFrom = dayjs().startOf('day');
-  } else {
-    formattedDateFrom = dayjs().subtract(1, dateFrom);
-  }
+  const formattedDateFrom = getFormattedDateFrom(dateFrom);
 
   return formattedDateFrom ? watchedFilms.filter((film) => formattedDateFrom.isSameOrBefore(dayjs(film.userDetails.watchingDate))) : watchedFilms;
 };

@@ -25,7 +25,7 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getFilms()
         .then((films) => {
-          const items = createStoreStructure(films.map(FilmsModel.adaptToServer));
+          const items = createStoreStructure(films);
           this._store.setItems(items);
           return films;
         });
@@ -33,19 +33,19 @@ export default class Provider {
 
     const storeFilms = Object.values(this._store.getItems());
 
-    return Promise.resolve(storeFilms.map(FilmsModel.adaptToClient));
+    return Promise.resolve(storeFilms);
   }
 
   updateFilm(film) {
     if (isOnline()) {
       return this._api.updateFilm(film)
         .then((updatedFilm) => {
-          this._store.setItem(updatedFilm.id, FilmsModel.adaptToServer(updatedFilm));
+          this._store.setItem(updatedFilm.id, updatedFilm);
           return updatedFilm;
         });
     }
 
-    this._store.setItem(film.id, FilmsModel.adaptToServer(Object.assign({}, film)));
+    this._store.setItem(film.id, Object.assign({}, film));
 
     return Promise.resolve(film);
   }
@@ -79,13 +79,14 @@ export default class Provider {
 
   sync() {
     if (isOnline()) {
-      const storeFilms = Object.values(this._store.getItems());
+      const values = Object.values(this._store.getItems());
+      const storeFilms = values.map(FilmsModel.adaptToServer);
 
       return this._api.sync(storeFilms)
         .then((response) => {
           const updatedFilms = getSyncedFilms(response.updated);
 
-          const items = createStoreStructure([...updatedFilms]);
+          const items = createStoreStructure(updatedFilms.map(FilmsModel.adaptToClient));
 
           this._store.setItems(items);
         });
