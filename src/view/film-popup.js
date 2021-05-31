@@ -2,7 +2,7 @@ import he from 'he';
 import Smart from './smart';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {MINUTES_IN_HOUR} from '../constants';
+import {Key, MINUTES_IN_HOUR} from '../constants';
 
 dayjs.extend(relativeTime);
 
@@ -62,7 +62,9 @@ const createCommentTemplate = (comment, deletingCommentId, isDeleting) => {
 };
 
 const createCommentsTemplate = (comments, deletingCommentId, isDeleting) => {
-  return comments.length > 0 ? comments.map((comment) => createCommentTemplate(comment, deletingCommentId, isDeleting)).join('') : '';
+  const commentsItemsTemplate = comments.map((comment) => createCommentTemplate(comment, deletingCommentId, isDeleting)).join('');
+
+  return comments.length > 0 ? `<ul class="film-details__comments-list">${commentsItemsTemplate}</ul>` : '<p>Failed to load comments</p>';
 };
 
 const createSelectedEmotionTemplate = (selectedEmotion) => {
@@ -218,9 +220,7 @@ const createFilmPopupTemplate = (data, comments) => {
         <section class="film-details__comments-wrap">
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
-          <ul class="film-details__comments-list">
-            ${commentsTemplate}
-          </ul>
+          ${commentsTemplate}
 
           <div class="film-details__new-comment">
             <div class="film-details__add-emoji-label">
@@ -295,7 +295,12 @@ export default class FilmPopup extends Smart {
 
   setDeleteCommentButtonClickHandler(callback) {
     this._callback.deleteCommentButtonClick = callback;
-    this.getElement().querySelector('.film-details__comments-list').addEventListener('click', this._deleteCommentButtonClickHandler);
+
+    const commentsList = this.getElement().querySelector('.film-details__comments-list');
+
+    if (commentsList) {
+      commentsList.addEventListener('click', this._deleteCommentButtonClickHandler);
+    }
   }
 
   setCommentFormSubmitHandler(callback) {
@@ -357,7 +362,7 @@ export default class FilmPopup extends Smart {
   }
 
   _commentFormSubmitHandler(evt) {
-    if (evt.keyCode === 13 && evt.metaKey) {
+    if ((evt.metaKey || evt.ctrlKey) && evt.key === Key.ENTER) {
       evt.preventDefault();
 
       this._callback.commentFormSubmit(FilmPopup.parseDataToComment(this._data));

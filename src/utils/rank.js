@@ -1,21 +1,17 @@
-const Rank = {
-  '1': 'Novice',
-  '11': 'Fan',
-  '21': 'Movie Buff',
-};
+const Rank = new Map([
+  [21, 'Movie Buff'],
+  [11, 'Fan'],
+  [1, 'Novice'],
+]);
 
 const getRank = (watchedFilmsAmount) => {
-  const ratingLimits = Object.keys(Rank);
-  let rank = null;
-
-  for (let i = ratingLimits.length - 1; i >= 0; i--) {
-    if (watchedFilmsAmount >= Number(ratingLimits[i])) {
-      rank = Rank[ratingLimits[i]];
-      break;
+  for (const key of Rank.keys()) {
+    if (watchedFilmsAmount >= key) {
+      return Rank.get(key);
     }
   }
 
-  return rank;
+  return null;
 };
 
 export {getRank};

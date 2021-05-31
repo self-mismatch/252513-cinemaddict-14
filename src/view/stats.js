@@ -1,6 +1,6 @@
 import Smart from './smart';
 
-import {MINUTES_IN_HOUR} from '../constants';
+import {MINUTES_IN_HOUR, StatsDate} from '../constants';
 
 import {getWatchedFilmsAmount, getWatchedFilmsRuntime} from '../utils/film';
 import {getSortedGenres, getTopGenre, getWatchedFilmsInDateRange} from '../utils/stats';
@@ -8,15 +8,6 @@ import {getRank} from '../utils/rank';
 
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import dayjs from 'dayjs';
-
-const StatsDate = {
-  ALL_TIME: 'all',
-  TODAY: 'today',
-  WEEK: 'week',
-  MONTH: 'month',
-  YEAR: 'year',
-};
 
 const createTotalDurationTemplate = (runtime) => {
   const hours = Math.floor(runtime / MINUTES_IN_HOUR);
@@ -105,13 +96,14 @@ const createStatsTemplate = (data) => {
   const rank = getRank(getWatchedFilmsAmount(data.films));
 
   const films = getWatchedFilmsInDateRange(data.films, data.dateFrom);
+  const hasFilms = films.length > 0;
   const activeDateInput = data.activeDateInput;
 
-  const watchedFilmsAmount = films.length > 0 ? getWatchedFilmsAmount(films) : 0;
-  const watchedFilmsRuntime = films.length > 0 ? getWatchedFilmsRuntime(films) : 0;
+  const watchedFilmsAmount = hasFilms ? getWatchedFilmsAmount(films) : 0;
+  const watchedFilmsRuntime = hasFilms ? getWatchedFilmsRuntime(films) : 0;
 
   const totalDurationTemplate = createTotalDurationTemplate(watchedFilmsRuntime);
-  const topGenre = films.length > 0 ? getTopGenre(films) : '';
+  const topGenre = hasFilms ? getTopGenre(films) : '';
 
   return `<section class="statistic">
     <p class="statistic__rank">
@@ -217,7 +209,7 @@ export default class Stats extends Smart {
 
     evt.preventDefault();
 
-    const dateFrom = StatsDate.ALL_TIME !== evt.target.value ? dayjs().subtract(1, evt.target.value) : StatsDate.ALL_TIME;
+    const dateFrom = evt.target.value;
     const activeDateInput = evt.target.value;
 
     this.updateData({
