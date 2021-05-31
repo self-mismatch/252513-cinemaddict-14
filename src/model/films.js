@@ -69,6 +69,8 @@ export default class Films extends Observer {
   }
 
   static adaptToServer(film) {
+    const date = film.filmInfo.releaseDate instanceof Date ? film.filmInfo.releaseDate.toISOString() : new Date(film.filmInfo.releaseDate).toISOString();
+
     const adaptedFilm = Object.assign(
       {},
       film,
@@ -80,7 +82,7 @@ export default class Films extends Observer {
           genre: film.filmInfo.genres,
           release: {
             'release_country': film.filmInfo.country,
-            date: film.filmInfo.releaseDate.toISOString(),
+            date,
           },
           'total_rating': film.filmInfo.totalRating,
         },
@@ -97,6 +99,7 @@ export default class Films extends Observer {
     delete adaptedFilm.film_info.alternativeTitle;
     delete adaptedFilm.film_info.country;
     delete adaptedFilm.film_info.genres;
+    delete adaptedFilm.film_info.releaseDate;
     delete adaptedFilm.film_info.totalRating;
     delete adaptedFilm.userDetails;
     delete adaptedFilm.user_details.alreadyWatched;
